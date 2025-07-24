@@ -34,15 +34,15 @@ All colors MUST be HSL.
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 0 84% 60%;
+    --ring: 27 85% 53%; /* Use SMART gold for focus ring */
 
     --radius: 0.75rem;
 
-    /* SMART Train brand colors */
-    --smart-green: 120 65% 35%;
-    --smart-gold: 45 85% 55%;
-    --smart-dark-green: 120 50% 25%;
-    --smart-light-green: 120 40% 85%;
+    /* SMART Train brand colors - from official logo SVG */
+    --smart-green: 143 72% 14%; /* #114533 from logo */
+    --smart-gold: 27 85% 53%; /* #E48E25 from logo */
+    --smart-dark-green: 143 72% 10%; /* Darker green for depth */
+    --smart-light-green: 143 72% 20%; /* Lighter green for accents */
 
     /* Transit-specific colors */
     --transit-primary: var(--smart-green);
@@ -107,13 +107,13 @@ All colors MUST be HSL.
 
     --border: 220 13% 20%;
     --input: 220 13% 20%;
-    --ring: 0 84% 60%;
+    --ring: 27 85% 60%; /* Use SMART gold for focus ring in dark mode */
 
     /* SMART Train dark theme colors */
-    --smart-green: 120 65% 40%;
-    --smart-gold: 45 85% 60%;
-    --smart-dark-green: 120 50% 30%;
-    --smart-light-green: 120 40% 20%;
+    --smart-green: 143 72% 20%; /* Lighter for dark mode */
+    --smart-gold: 27 85% 60%; /* Brighter for dark mode */
+    --smart-dark-green: 143 72% 15%;
+    --smart-light-green: 143 72% 25%;
 
     /* Transit-specific dark colors */
     --transit-primary: var(--smart-green);

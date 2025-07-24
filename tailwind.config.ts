@@ -62,10 +62,10 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// SMART Train brand colors
+				// SMART Train brand colors - from official logo SVG
 				smart: {
-					green: 'hsl(var(--smart-green))',
-					gold: 'hsl(var(--smart-gold))',
+					green: 'hsl(var(--smart-green))', /* #114533 */
+					gold: 'hsl(var(--smart-gold))', /* #E48E25 */
 					'dark-green': 'hsl(var(--smart-dark-green))',
 					'light-green': 'hsl(var(--smart-light-green))'
 				},

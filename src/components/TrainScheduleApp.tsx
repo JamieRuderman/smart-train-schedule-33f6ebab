@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -121,6 +121,16 @@ export function TrainScheduleApp() {
   const [toStation, setToStation] = useState<string>("");
   const [scheduleType, setScheduleType] = useState<"weekday" | "weekend">("weekday");
   const [direction, setDirection] = useState<"southbound" | "northbound">("southbound");
+  const [showAllTrips, setShowAllTrips] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
+
+  // Update current time every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const filteredTrips = useMemo(() => {
     if (!fromStation || !toStation) return [];
@@ -164,8 +174,39 @@ export function TrainScheduleApp() {
 
   const formatTime = (time: string) => {
     // Remove any markup like asterisks
-    return time.replace(/\*/g, '');
+    const cleanTime = time.replace(/\*/g, '');
+    
+    // Convert to 12-hour format with AM/PM
+    const [hours, minutes] = cleanTime.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+    
+    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
   };
+
+  const isTimeInPast = (time: string) => {
+    const cleanTime = time.replace(/\*/g, '');
+    const [hours, minutes] = cleanTime.split(':').map(Number);
+    const tripTime = new Date();
+    tripTime.setHours(hours, minutes, 0, 0);
+    
+    return tripTime < currentTime;
+  };
+
+  const getNextTripIndex = (trips: any[]) => {
+    const now = currentTime;
+    for (let i = 0; i < trips.length; i++) {
+      if (!isTimeInPast(trips[i].departureTime)) {
+        return i;
+      }
+    }
+    return -1; // No future trips today
+  };
+
+  const nextTripIndex = getNextTripIndex(filteredTrips);
+  const displayedTrips = showAllTrips 
+    ? filteredTrips 
+    : filteredTrips.slice(nextTripIndex >= 0 ? nextTripIndex : 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -277,37 +318,91 @@ export function TrainScheduleApp() {
               <p className="text-sm text-muted-foreground">
                 {fromStation} → {toStation} • {scheduleType === "weekday" ? "Weekday" : "Weekend/Holiday"}
               </p>
+              {nextTripIndex > 0 && !showAllTrips && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setShowAllTrips(true)}
+                  className="mt-2"
+                >
+                  Show earlier trains ({nextTripIndex} hidden)
+                </Button>
+              )}
+              {showAllTrips && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setShowAllTrips(false)}
+                  className="mt-2"
+                >
+                  Hide earlier trains
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {filteredTrips.map((trip) => (
-                  <div
-                    key={trip.trip}
-                    className="flex items-center justify-between p-4 rounded-lg border bg-gradient-card hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-center gap-4">
-                      <Badge variant="outline" className="font-mono">
-                        Train {trip.trip}
-                      </Badge>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="font-medium">{formatTime(trip.departureTime)}</span>
-                        <span className="text-muted-foreground">→</span>
-                        <span className="font-medium">{formatTime(trip.arrivalTime)}</span>
-                      </div>
-                    </div>
-                    
-                    {trip.ferry && (
-                      <div className="text-right">
-                        <Badge variant="secondary" className="text-xs">
-                          Ferry Connection
+                {displayedTrips.map((trip, index) => {
+                  const isPastTrip = isTimeInPast(trip.departureTime);
+                  const isNextTrip = !showAllTrips && index === 0 && nextTripIndex >= 0;
+                  const showFerry = trip.ferry && toStation === "Larkspur";
+                  
+                  return (
+                    <div
+                      key={trip.trip}
+                      className={cn(
+                        "flex items-center justify-between p-4 rounded-lg border transition-all",
+                        isPastTrip && showAllTrips
+                          ? "bg-muted/50 opacity-60 text-muted-foreground border-muted"
+                          : "bg-gradient-card hover:shadow-md",
+                        isNextTrip && "ring-2 ring-smart-gold/50 bg-smart-gold/5"
+                      )}
+                    >
+                      <div className="flex items-center gap-4">
+                        <Badge 
+                          variant="outline" 
+                          className={cn(
+                            "font-mono",
+                            isNextTrip && "border-smart-gold text-smart-gold",
+                            isPastTrip && showAllTrips && "border-muted-foreground/30"
+                          )}
+                        >
+                          Train {trip.trip}
                         </Badge>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Departs {trip.ferry.depart}
-                        </p>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className={cn(
+                            "font-medium",
+                            isNextTrip && "text-smart-gold"
+                          )}>
+                            {formatTime(trip.departureTime)}
+                          </span>
+                          <span className="text-muted-foreground">→</span>
+                          <span className={cn(
+                            "font-medium",
+                            isNextTrip && "text-smart-gold"
+                          )}>
+                            {formatTime(trip.arrivalTime)}
+                          </span>
+                        </div>
+                        {isNextTrip && (
+                          <Badge variant="secondary" className="text-xs bg-smart-gold text-white">
+                            Next Train
+                          </Badge>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                      
+                      {showFerry && (
+                        <div className="text-right">
+                          <Badge variant="secondary" className="text-xs">
+                            Ferry Connection
+                          </Badge>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Departs {formatTime(trip.ferry.depart)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
