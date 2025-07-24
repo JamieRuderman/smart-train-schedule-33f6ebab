@@ -20,20 +20,20 @@ All colors MUST be HSL.
     --primary: 120 65% 35%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 45 85% 55%;
-    --secondary-foreground: 220 13% 18%;
+    --secondary: var(--smart-gold);
+    --secondary-foreground: var(--foreground);
 
-    --muted: 120 15% 95%;
-    --muted-foreground: 120 8% 45%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 45 85% 55%;
-    --accent-foreground: 220 13% 18%;
+    --accent: var(--smart-gold);
+    --accent-foreground: var(--foreground);
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
     --ring: 27 85% 53%; /* Use SMART gold for focus ring */
 
     --radius: 0.75rem;
@@ -93,20 +93,20 @@ All colors MUST be HSL.
     --primary: 120 65% 40%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 13% 15%;
-    --secondary-foreground: 220 14% 96%;
+    --secondary: var(--smart-gold);
+    --secondary-foreground: var(--foreground);
 
-    --muted: 220 13% 15%;
-    --muted-foreground: 220 8.9% 65%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 220 13% 15%;
-    --accent-foreground: 220 14% 96%;
+    --accent: var(--smart-gold);
+    --accent-foreground: var(--foreground);
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 220 14% 96%;
 
-    --border: 220 13% 20%;
-    --input: 220 13% 20%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
     --ring: 27 85% 60%; /* Use SMART gold for focus ring in dark mode */
 
     /* SMART Train dark theme colors */

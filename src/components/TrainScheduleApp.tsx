@@ -17,9 +17,9 @@ import smartLogo from "@/assets/smart-logo.svg";
 // The train stations and schedules are now stored in JSON files in src/data.
 // To update the schedule or stations, edit the corresponding JSON file.
 // No code changes are needed for simple data updates.
-import stations from "@/data/stations.json";
-import weekdaySchedule from "@/data/weekdaySchedule.json";
-import weekendSchedule from "@/data/weekendSchedule.json";
+import stations from "@/data/stations";
+import weekdaySchedule from "@/data/weekdaySchedule";
+import weekendSchedule from "@/data/weekendSchedule";
 import type {
   FerryConnection,
   TrainTrip,
@@ -28,6 +28,7 @@ import type {
   WeekendSchedule,
   STATION_COUNT,
   TupleOf,
+  Station,
 } from "@/types/smartSchedule";
 
 // --- Helper Functions ---
@@ -83,8 +84,8 @@ const isTimeInPast = (
 };
 
 export function TrainScheduleApp() {
-  const [fromStation, setFromStation] = useState<string>("");
-  const [toStation, setToStation] = useState<string>("");
+  const [fromStation, setFromStation] = useState<Station | "">("");
+  const [toStation, setToStation] = useState<Station | "">("");
   const [scheduleType, setScheduleType] = useState<"weekday" | "weekend">(
     "weekday"
   );
@@ -93,8 +94,8 @@ export function TrainScheduleApp() {
   const [showServiceAlert, setShowServiceAlert] = useState(false);
 
   // Make fromIndex and toIndex available throughout the component
-  const fromIndex = stations.indexOf(fromStation);
-  const toIndex = stations.indexOf(toStation);
+  const fromIndex = fromStation ? stations.indexOf(fromStation as Station) : -1;
+  const toIndex = toStation ? stations.indexOf(toStation as Station) : -1;
 
   // Update current time every minute
   useEffect(() => {
@@ -224,7 +225,10 @@ export function TrainScheduleApp() {
                 <label className="text-sm font-medium text-muted-foreground">
                   From
                 </label>
-                <Select value={fromStation} onValueChange={setFromStation}>
+                <Select
+                  value={fromStation as Station | ""}
+                  onValueChange={(v) => setFromStation(v as Station)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select departure station" />
                   </SelectTrigger>
@@ -252,7 +256,10 @@ export function TrainScheduleApp() {
                   <label className="text-sm font-medium text-muted-foreground">
                     To
                   </label>
-                  <Select value={toStation} onValueChange={setToStation}>
+                  <Select
+                    value={toStation as Station | ""}
+                    onValueChange={(v) => setToStation(v as Station)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select arrival station" />
                     </SelectTrigger>
@@ -294,12 +301,12 @@ export function TrainScheduleApp() {
 
         {/* Service Alerts */}
         {showServiceAlert ? (
-          <Card className="mb-6 border-delay/20 bg-delay/5">
+          <Card className="mb-6 ring-2 ring-smart-gold/50 bg-smart-gold/5 border border-smart-gold">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-delay mt-0.5" />
+                <AlertCircle className="h-5 w-5 text-smart-gold mt-0.5" />
                 <div className="space-y-2">
-                  <p className="font-medium text-delay">Service Alert</p>
+                  <p className="font-medium text-smart-gold">Service Alert</p>
                   <p className="text-sm text-muted-foreground">
                     Effective Monday, June 23, 2025, the first three Southbound
                     weekday trips departing from Windsor are temporarily
@@ -321,12 +328,12 @@ export function TrainScheduleApp() {
         ) : (
           <div className="mb-6 flex justify-center">
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
-              className="w-full justify-start font-medium gap-2"
+              className="w-full justify-start font-medium gap-2 border border-smart-gold ring-2 ring-smart-gold/50 bg-smart-gold/5 text-smart-gold"
               onClick={() => setShowServiceAlert(true)}
             >
-              <AlertCircle className="h-5 w-5 text-delay" />
+              <AlertCircle className="h-5 w-5 text-smart-gold" />
               Service Alert
             </Button>
           </div>

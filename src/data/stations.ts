@@ -1,4 +1,6 @@
-[
+import type { Station } from "@/types/smartSchedule";
+
+const stations: Station[] = [
   "Windsor",
   "Sonoma County Airport",
   "Santa Rosa North",
@@ -12,5 +14,7 @@
   "Novato Hamilton",
   "Marin Civic Center",
   "San Rafael",
-  "Larkspur"
-]
+  "Larkspur",
+];
+
+export default stations;
