@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpDown, Clock, MapPin, Calendar, Train, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import smartLogo from "@/assets/smart-logo.svg";
 
 // SMART Train stations in order from north to south
 const stations = [
@@ -173,7 +174,7 @@ export function TrainScheduleApp() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-3 mb-4">
             <img 
-              src="/src/assets/smart-logo.svg" 
+              src={smartLogo} 
               alt="SMART Train Logo" 
               className="h-8 w-auto"
             />
