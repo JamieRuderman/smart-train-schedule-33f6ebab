@@ -52,7 +52,7 @@ All colors MUST be HSL.
     --delay: 15 86% 55%;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-green)), hsl(var(--smart-gold)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-gold)), hsl(var(--smart-green)));
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(120 15% 98%));
 
     /* Shadows */
@@ -123,7 +123,7 @@ All colors MUST be HSL.
     --delay: 15 86% 65%;
 
     /* Dark gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-green)), hsl(var(--smart-gold)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-gold)), hsl(var(--smart-green)));
     --gradient-card: linear-gradient(145deg, hsl(220 13% 11%), hsl(120 13% 13%));
 
     /* Dark shadows */
