@@ -61,7 +61,34 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// SMART Train brand colors
+				smart: {
+					red: 'hsl(var(--smart-red))',
+					green: 'hsl(var(--smart-green))',
+					blue: 'hsl(var(--smart-blue))',
+					gray: 'hsl(var(--smart-gray))'
+				},
+				// Transit-specific colors
+				transit: {
+					primary: 'hsl(var(--transit-primary))',
+					secondary: 'hsl(var(--transit-secondary))',
+					departure: 'hsl(var(--departure))',
+					arrival: 'hsl(var(--arrival))',
+					delay: 'hsl(var(--delay))'
 				}
+			},
+			backgroundImage: {
+				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-card': 'var(--gradient-card)'
+			},
+			boxShadow: {
+				'card': 'var(--shadow-card)',
+				'elevated': 'var(--shadow-elevated)'
+			},
+			transitionTimingFunction: {
+				'smooth': 'var(--transition-smooth)',
+				'fast': 'var(--transition-fast)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
