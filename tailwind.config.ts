@@ -64,10 +64,10 @@ export default {
 				},
 				// SMART Train brand colors
 				smart: {
-					red: 'hsl(var(--smart-red))',
 					green: 'hsl(var(--smart-green))',
-					blue: 'hsl(var(--smart-blue))',
-					gray: 'hsl(var(--smart-gray))'
+					gold: 'hsl(var(--smart-gold))',
+					'dark-green': 'hsl(var(--smart-dark-green))',
+					'light-green': 'hsl(var(--smart-light-green))'
 				},
 				// Transit-specific colors
 				transit: {

@@ -172,7 +172,11 @@ export function TrainScheduleApp() {
       <div className="bg-gradient-hero text-white">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-3 mb-4">
-            <Train className="h-8 w-8" />
+            <img 
+              src="/src/assets/smart-logo.svg" 
+              alt="SMART Train Logo" 
+              className="h-8 w-auto"
+            />
             <h1 className="text-2xl font-bold">SMART Train</h1>
           </div>
           <p className="text-white/90">Sonoma-Marin Area Rail Transit</p>

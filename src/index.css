@@ -17,16 +17,16 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 18%;
 
-    --primary: 0 84% 60%;
+    --primary: 120 65% 35%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
+    --secondary: 45 85% 55%;
     --secondary-foreground: 220 13% 18%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 8.9% 46.1%;
+    --muted: 120 15% 95%;
+    --muted-foreground: 120 8% 45%;
 
-    --accent: 220 14% 96%;
+    --accent: 45 85% 55%;
     --accent-foreground: 220 13% 18%;
 
     --destructive: 0 84.2% 60.2%;
@@ -39,25 +39,25 @@ All colors MUST be HSL.
     --radius: 0.75rem;
 
     /* SMART Train brand colors */
-    --smart-red: 0 84% 60%;
-    --smart-green: 142 71% 45%;
-    --smart-blue: 217 91% 60%;
-    --smart-gray: 220 8.9% 46.1%;
+    --smart-green: 120 65% 35%;
+    --smart-gold: 45 85% 55%;
+    --smart-dark-green: 120 50% 25%;
+    --smart-light-green: 120 40% 85%;
 
     /* Transit-specific colors */
-    --transit-primary: var(--smart-red);
-    --transit-secondary: var(--smart-green);
+    --transit-primary: var(--smart-green);
+    --transit-secondary: var(--smart-gold);
     --departure: 35 91% 65%;
     --arrival: var(--smart-green);
     --delay: 15 86% 55%;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-red)), hsl(var(--smart-blue)));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 14% 98%));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-green)), hsl(var(--smart-gold)));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(120 15% 98%));
 
     /* Shadows */
-    --shadow-card: 0 4px 12px -4px hsl(var(--smart-red) / 0.1);
-    --shadow-elevated: 0 8px 32px -8px hsl(var(--smart-red) / 0.15);
+    --shadow-card: 0 4px 12px -4px hsl(var(--smart-green) / 0.1);
+    --shadow-elevated: 0 8px 32px -8px hsl(var(--smart-green) / 0.15);
 
     /* Animation */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -90,7 +90,7 @@ All colors MUST be HSL.
     --popover: 220 13% 11%;
     --popover-foreground: 220 14% 96%;
 
-    --primary: 0 84% 60%;
+    --primary: 120 65% 40%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 13% 15%;
@@ -110,21 +110,21 @@ All colors MUST be HSL.
     --ring: 0 84% 60%;
 
     /* SMART Train dark theme colors */
-    --smart-red: 0 84% 60%;
-    --smart-green: 142 71% 55%;
-    --smart-blue: 217 91% 70%;
-    --smart-gray: 220 8.9% 65%;
+    --smart-green: 120 65% 40%;
+    --smart-gold: 45 85% 60%;
+    --smart-dark-green: 120 50% 30%;
+    --smart-light-green: 120 40% 20%;
 
     /* Transit-specific dark colors */
-    --transit-primary: var(--smart-red);
-    --transit-secondary: var(--smart-green);
+    --transit-primary: var(--smart-green);
+    --transit-secondary: var(--smart-gold);
     --departure: 35 91% 75%;
     --arrival: var(--smart-green);
     --delay: 15 86% 65%;
 
     /* Dark gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-red)), hsl(var(--smart-blue)));
-    --gradient-card: linear-gradient(145deg, hsl(220 13% 11%), hsl(220 13% 13%));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-green)), hsl(var(--smart-gold)));
+    --gradient-card: linear-gradient(145deg, hsl(220 13% 11%), hsl(120 13% 13%));
 
     /* Dark shadows */
     --shadow-card: 0 4px 12px -4px hsl(0 0% 0% / 0.3);
@@ -132,12 +132,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 220 13% 8%;
     --sidebar-foreground: 220 14% 96%;
-    --sidebar-primary: 0 84% 60%;
+    --sidebar-primary: 120 65% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 13% 12%;
     --sidebar-accent-foreground: 220 14% 96%;
     --sidebar-border: 220 13% 18%;
-    --sidebar-ring: 0 84% 60%;
+    --sidebar-ring: 120 65% 40%;
   }
 }
 
