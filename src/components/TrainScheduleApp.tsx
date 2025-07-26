@@ -383,10 +383,9 @@ export function TrainScheduleApp() {
                     trip.times[fromIndex],
                     period
                   );
-                  // Always highlight the next train, even when showing all trips
-                  const isNextTrip =
-                    index === (showAllTrips ? nextTripIndex : 0) &&
-                    nextTripIndex >= 0;
+                  // Find the next trip that hasn't departed yet
+                  const nextTrip = nextTripIndex >= 0 ? filteredTrips[nextTripIndex] : null;
+                  const isNextTrip = nextTrip && trip.trip === nextTrip.trip && !isPastTrip;
                   const showFerry = trip.ferry && toStation === "Larkspur";
 
                   return (
