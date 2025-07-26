@@ -83,6 +83,205 @@ const isTimeInPast = (
   return tripTime < currentTimeParam;
 };
 
+// --- Reusable Components ---
+
+interface StationSelectorProps {
+  value: Station | "";
+  onValueChange: (value: Station) => void;
+  placeholder: string;
+  label: string;
+}
+
+function StationSelector({ value, onValueChange, placeholder, label }: StationSelectorProps) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium text-muted-foreground">
+        {label}
+      </label>
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {stations.map((station) => (
+            <SelectItem key={station} value={station}>
+              {station}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+interface TimeDisplayProps {
+  time: string;
+  period: "am" | "pm";
+  isNextTrip?: boolean;
+}
+
+function TimeDisplay({ time, period, isNextTrip = false }: TimeDisplayProps) {
+  return (
+    <span
+      className={cn(
+        "font-medium",
+        isNextTrip && "text-smart-green"
+      )}
+    >
+      {formatTime(time, period)}
+    </span>
+  );
+}
+
+interface TrainBadgeProps {
+  tripNumber: number;
+  isNextTrip?: boolean;
+  isPastTrip?: boolean;
+  showAllTrips?: boolean;
+}
+
+function TrainBadge({ tripNumber, isNextTrip = false, isPastTrip = false, showAllTrips = false }: TrainBadgeProps) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "font-mono",
+        isNextTrip && "border-smart-green text-smart-green",
+        isPastTrip && showAllTrips && "border-muted-foreground/30"
+      )}
+    >
+      Train {tripNumber.toString()}
+    </Badge>
+  );
+}
+
+function NextTrainBadge() {
+  return (
+    <Badge
+      variant="secondary"
+      className="text-xs bg-primary text-white"
+    >
+      Next Train
+    </Badge>
+  );
+}
+
+interface FerryConnectionProps {
+  ferry: FerryConnection;
+  period: "am" | "pm";
+  isMobile?: boolean;
+}
+
+function FerryConnection({ ferry, period, isMobile = false }: FerryConnectionProps) {
+  if (isMobile) {
+    return (
+      <div className="flex items-center justify-between">
+        <Badge className="text-xs text-white">
+          Ferry Connection
+        </Badge>
+        <p className="text-xs text-muted-foreground">
+          Departs {formatTime(ferry.depart, period)}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-right">
+      <span className="text-xs text-muted-foreground mr-4">
+        Departs {formatTime(ferry.depart, period)}
+      </span>
+      <Badge className="text-xs text-white">
+        Ferry Connection
+      </Badge>
+    </div>
+  );
+}
+
+interface TripCardProps {
+  trip: TrainTrip;
+  fromIndex: number;
+  toIndex: number;
+  directionSchedule: DirectionSchedule;
+  currentTime: Date;
+  isNextTrip: boolean;
+  isPastTrip: boolean;
+  showAllTrips: boolean;
+  showFerry: boolean;
+}
+
+function TripCard({ 
+  trip, 
+  fromIndex, 
+  toIndex, 
+  directionSchedule, 
+  currentTime, 
+  isNextTrip, 
+  isPastTrip, 
+  showAllTrips, 
+  showFerry 
+}: TripCardProps) {
+  const period = getTripPeriod(trip, directionSchedule);
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col md:flex-row md:items-center md:justify-between p-4 rounded-lg border transition-all space-y-2 md:space-y-0",
+        "bg-gradient-card hover:shadow-md",
+        isNextTrip && "ring-2 ring-smart-green/50 bg-smart-green/5"
+      )}
+    >
+      {/* Mobile Layout */}
+      <div className="flex flex-col space-y-2 md:hidden">
+        {/* Train # and Next Train badge */}
+        <div className="flex items-center justify-between">
+          <TrainBadge 
+            tripNumber={trip.trip} 
+            isNextTrip={isNextTrip} 
+            isPastTrip={isPastTrip} 
+            showAllTrips={showAllTrips} 
+          />
+          {isNextTrip && <NextTrainBadge />}
+        </div>
+
+        {/* Times */}
+        <div className="flex items-center gap-2 text-sm">
+          <TimeDisplay time={trip.times[fromIndex]} period={period} isNextTrip={isNextTrip} />
+          <span className="text-muted-foreground">→</span>
+          <TimeDisplay time={trip.times[toIndex]} period={period} isNextTrip={isNextTrip} />
+        </div>
+
+        {/* Ferry info - only if ferry exists */}
+        {showFerry && trip.ferry && (
+          <FerryConnection ferry={trip.ferry} period={period} isMobile={true} />
+        )}
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden md:flex md:items-center md:gap-4">
+        <TrainBadge 
+          tripNumber={trip.trip} 
+          isNextTrip={isNextTrip} 
+          isPastTrip={isPastTrip} 
+          showAllTrips={showAllTrips} 
+        />
+        <div className="flex items-center gap-2 text-sm">
+          <TimeDisplay time={trip.times[fromIndex]} period={period} isNextTrip={isNextTrip} />
+          <span className="text-muted-foreground">→</span>
+          <TimeDisplay time={trip.times[toIndex]} period={period} isNextTrip={isNextTrip} />
+        </div>
+        {isNextTrip && <NextTrainBadge />}
+      </div>
+
+      {showFerry && trip.ferry && (
+        <div className="hidden md:block">
+          <FerryConnection ferry={trip.ferry} period={period} isMobile={false} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function TrainScheduleApp() {
   const [fromStation, setFromStation] = useState<Station | "">("");
   const [toStation, setToStation] = useState<Station | "">("");
@@ -196,18 +395,12 @@ export function TrainScheduleApp() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-hero text-white">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3 mb-4">
-            <img
-              src={smartLogo}
-              alt="SMART Train Logo"
-              className="h-8 w-auto"
-            />
-            <h1 className="text-2xl font-bold">SMART Train</h1>
-          </div>
-          <p className="text-white/90">Sonoma-Marin Area Rail Transit</p>
-        </div>
+      <div className="container mx-auto px-4 py-6 flex flex-col items-center gap-3 bg-smart-gold">
+        <img
+          src={smartLogo}
+          alt="Sonoma-Marin Area Rail Transit"
+          className="h-auto w-72"
+        />
       </div>
 
       <div className="container mx-auto px-4 py-6">
@@ -221,26 +414,12 @@ export function TrainScheduleApp() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  From
-                </label>
-                <Select
-                  value={fromStation as Station | ""}
-                  onValueChange={(v) => setFromStation(v as Station)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select departure station" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stations.map((station) => (
-                      <SelectItem key={station} value={station}>
-                        {station}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <StationSelector
+                value={fromStation}
+                onValueChange={(v) => setFromStation(v)}
+                placeholder="Select departure station"
+                label="From"
+              />
 
               <div className="flex items-end">
                 <Button
@@ -252,25 +431,13 @@ export function TrainScheduleApp() {
                 >
                   <ArrowUpDown className="h-4 w-4" />
                 </Button>
-                <div className="flex-1 space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    To
-                  </label>
-                  <Select
-                    value={toStation as Station | ""}
-                    onValueChange={(v) => setToStation(v as Station)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select arrival station" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {stations.map((station) => (
-                        <SelectItem key={station} value={station}>
-                          {station}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="flex-1">
+                  <StationSelector
+                    value={toStation}
+                    onValueChange={(v) => setToStation(v)}
+                    placeholder="Select arrival station"
+                    label="To"
+                  />
                 </div>
               </div>
             </div>
@@ -373,6 +540,19 @@ export function TrainScheduleApp() {
               )}
             </CardHeader>
             <CardContent>
+              {nextTripIndex === -1 && !showAllTrips && (
+                <div className="mb-4 p-3 bg-smart-gold/10 border border-smart-gold/20 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-smart-gold" />
+                    <p className="text-smart-gold font-medium">
+                      No more trains today
+                    </p>
+                  </div>
+                  <p className="text-sm text-smart-gold/80 mt-1 ml-6">
+                    All scheduled trains for today have departed
+                  </p>
+                </div>
+              )}
               <div className="space-y-3">
                 {displayedTrips.map((trip, index) => {
                   const period = directionSchedule
@@ -384,143 +564,33 @@ export function TrainScheduleApp() {
                     period
                   );
                   // Find the next trip using the same time logic as isPastTrip
-                  const isNextTrip = !isPastTrip && 
-                    displayedTrips
-                      .slice(0, index)
-                      .every(prevTrip => {
-                        const prevPeriod = directionSchedule
-                          ? getTripPeriod(prevTrip, directionSchedule)
-                          : "am";
-                        return isTimeInPast(currentTime, prevTrip.times[fromIndex], prevPeriod);
-                      });
+                  const isNextTrip =
+                    !isPastTrip &&
+                    displayedTrips.slice(0, index).every((prevTrip) => {
+                      const prevPeriod = directionSchedule
+                        ? getTripPeriod(prevTrip, directionSchedule)
+                        : "am";
+                      return isTimeInPast(
+                        currentTime,
+                        prevTrip.times[fromIndex],
+                        prevPeriod
+                      );
+                    });
                   const showFerry = trip.ferry && toStation === "Larkspur";
 
                   return (
-                    <div
+                    <TripCard
                       key={trip.trip}
-                      className={cn(
-                        "flex flex-col md:flex-row md:items-center md:justify-between p-4 rounded-lg border transition-all space-y-2 md:space-y-0",
-                        isPastTrip && showAllTrips
-                          ? "bg-muted/50 opacity-60 text-muted-foreground border-muted"
-                          : "bg-gradient-card hover:shadow-md",
-                        isNextTrip &&
-                          "ring-2 ring-smart-gold/50 bg-smart-gold/5"
-                      )}
-                    >
-                      {/* Mobile Layout */}
-                      <div className="flex flex-col space-y-2 md:hidden">
-                        {/* Train # and Next Train badge */}
-                        <div className="flex items-center justify-between">
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "font-mono",
-                              isNextTrip && "border-smart-gold text-smart-gold",
-                              isPastTrip &&
-                                showAllTrips &&
-                                "border-muted-foreground/30"
-                            )}
-                          >
-                            Train {trip.trip}
-                          </Badge>
-                          {isNextTrip && (
-                            <Badge
-                              variant="secondary"
-                              className="text-xs bg-smart-gold text-white"
-                            >
-                              Next Train
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        {/* Times */}
-                        <div className="flex items-center gap-2 text-sm">
-                          <span
-                            className={cn(
-                              "font-medium",
-                              isNextTrip && "text-smart-gold"
-                            )}
-                          >
-                            {formatTime(trip.times[fromIndex], period)}
-                          </span>
-                          <span className="text-muted-foreground">→</span>
-                          <span
-                            className={cn(
-                              "font-medium",
-                              isNextTrip && "text-smart-gold"
-                            )}
-                          >
-                            {formatTime(trip.times[toIndex], period)}
-                          </span>
-                        </div>
-                        
-                        {/* Ferry info - only if ferry exists */}
-                        {showFerry && (
-                          <div className="flex items-center justify-between">
-                            <Badge variant="secondary" className="text-xs">
-                              Ferry Connection
-                            </Badge>
-                            <p className="text-xs text-muted-foreground">
-                              Departs {formatTime(trip.ferry.depart, period)}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Desktop Layout */}
-                      <div className="hidden md:flex md:items-center md:gap-4">
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            "font-mono",
-                            isNextTrip && "border-smart-gold text-smart-gold",
-                            isPastTrip &&
-                              showAllTrips &&
-                              "border-muted-foreground/30"
-                          )}
-                        >
-                          Train {trip.trip}
-                        </Badge>
-                        <div className="flex items-center gap-2 text-sm">
-                          <span
-                            className={cn(
-                              "font-medium",
-                              isNextTrip && "text-smart-gold"
-                            )}
-                          >
-                            {formatTime(trip.times[fromIndex], period)}
-                          </span>
-                          <span className="text-muted-foreground">→</span>
-                          <span
-                            className={cn(
-                              "font-medium",
-                              isNextTrip && "text-smart-gold"
-                            )}
-                          >
-                            {formatTime(trip.times[toIndex], period)}
-                          </span>
-                        </div>
-                        {isNextTrip && (
-                          <Badge
-                            variant="secondary"
-                            className="text-xs bg-smart-gold text-white"
-                          >
-                            Next Train
-                          </Badge>
-                        )}
-                      </div>
-
-                      {showFerry && (
-                        <div className="hidden md:block text-right">
-                          <Badge variant="secondary" className="text-xs">
-                            Ferry Connection
-                          </Badge>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Departs {formatTime(trip.ferry.depart, period)}
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                      trip={trip}
+                      fromIndex={fromIndex}
+                      toIndex={toIndex}
+                      directionSchedule={directionSchedule!}
+                      currentTime={currentTime}
+                      isNextTrip={isNextTrip}
+                      isPastTrip={isPastTrip}
+                      showAllTrips={showAllTrips}
+                      showFerry={showFerry}
+                    />
                   );
                 })}
               </div>
