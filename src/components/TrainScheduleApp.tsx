@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import smartLogo from "@/assets/smart-logo.svg";
 import type { Station } from "@/types/smartSchedule";
 import { getFilteredTrips, getStationIndex } from "@/lib/scheduleUtils";
@@ -125,18 +126,21 @@ export function TrainScheduleApp() {
 
         {/* Schedule Results */}
         {filteredTrips.length > 0 && fromStation && toStation && (
-          <ScheduleResults
-            filteredTrips={filteredTrips}
-            fromStation={fromStation}
-            toStation={toStation}
-            scheduleType={scheduleType}
-            fromIndex={fromIndex}
-            toIndex={toIndex}
-            currentTime={currentTime}
-            showAllTrips={showAllTrips}
-            onToggleShowAllTrips={toggleShowAllTrips}
-            timeFormat="12h"
-          />
+          <>
+            <Separator className="my-4" />
+            <ScheduleResults
+              filteredTrips={filteredTrips}
+              fromStation={fromStation}
+              toStation={toStation}
+              scheduleType={scheduleType}
+              fromIndex={fromIndex}
+              toIndex={toIndex}
+              currentTime={currentTime}
+              showAllTrips={showAllTrips}
+              onToggleShowAllTrips={toggleShowAllTrips}
+              timeFormat="12h"
+            />
+          </>
         )}
         {fromStation && toStation && filteredTrips.length === 0 && (
           <Card className="text-center py-8" role="status" aria-live="polite">

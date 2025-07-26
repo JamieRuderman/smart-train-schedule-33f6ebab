@@ -1,9 +1,15 @@
 import { memo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUpDown, MapPin, Calendar } from "lucide-react";
-import { StationSelector } from "./StationSelector";
+import { ArrowUpDown, MapPin, Calendar, Target } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import stations from "@/data/stations";
 import type { Station } from "@/types/smartSchedule";
 
 interface RouteSelectorProps {
@@ -26,52 +32,83 @@ export const RouteSelector = memo(function RouteSelector({
   onSwapStations,
 }: RouteSelectorProps) {
   return (
-    <Card
-      className="mb-6 shadow-card"
-      role="region"
-      aria-labelledby="route-planning-title"
-    >
-      <CardHeader>
-        <CardTitle
+    <>
+      <div className="flex flex-col space-y-1.5 p-6">
+        <h3
           id="route-planning-title"
-          className="flex items-center gap-2"
+          className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2"
         >
-          <MapPin className="h-5 w-5 text-primary" aria-hidden="true" />
           Plan Your Journey
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 gap-4">
-          <StationSelector
-            value={fromStation}
-            onValueChange={onFromStationChange}
-            placeholder="Select departure station"
-            label="From"
-          />
-
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <StationSelector
-                value={toStation}
-                onValueChange={onToStationChange}
-                placeholder="Select arrival station"
-                label="To"
-              />
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onSwapStations}
-              className="mt-6 shrink-0"
-              disabled={!fromStation || !toStation}
-              aria-label="Swap departure and arrival stations"
-              title="Swap departure and arrival stations"
-            >
-              <ArrowUpDown className="h-4 w-4" aria-hidden="true" />
-            </Button>
+        </h3>
+      </div>
+      <div className="p-6 pt-0 space-y-4">
+        {/* Compact Route Selection */}
+        <div className="flex items-center gap-4">
+          {/* Visual Indicators */}
+          <div className="flex flex-col items-center">
+            <MapPin className="h-5 w-5 text-primary fill-primary" />
+            <div className="w-px h-6 border-l border-dotted border-muted-foreground my-2"></div>
+            <Target className="h-5 w-5 text-primary" />
           </div>
+
+          {/* Station Selectors */}
+          <div className="flex-1 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <Select value={fromStation} onValueChange={onFromStationChange}>
+                  <SelectTrigger
+                    className="h-11"
+                    aria-label="Select departure station"
+                  >
+                    <SelectValue placeholder="Your location" />
+                  </SelectTrigger>
+                  <SelectContent role="listbox" aria-label="Available stations">
+                    {stations.map((station) => (
+                      <SelectItem key={station} value={station} role="option">
+                        {station}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <Select value={toStation} onValueChange={onToStationChange}>
+                  <SelectTrigger
+                    className="h-11"
+                    aria-label="Select arrival station"
+                  >
+                    <SelectValue placeholder="Destination" />
+                  </SelectTrigger>
+                  <SelectContent role="listbox" aria-label="Available stations">
+                    {stations.map((station) => (
+                      <SelectItem key={station} value={station} role="option">
+                        {station}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          {/* Swap Button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onSwapStations}
+            className="shrink-0"
+            disabled={!fromStation || !toStation}
+            aria-label="Swap departure and arrival stations"
+            title="Swap departure and arrival stations"
+          >
+            <ArrowUpDown className="h-4 w-4" aria-hidden="true" />
+          </Button>
         </div>
 
+        {/* Schedule Type Tabs */}
         <Tabs
           value={scheduleType}
           onValueChange={onScheduleTypeChange}
@@ -96,7 +133,7 @@ export const RouteSelector = memo(function RouteSelector({
             </TabsTrigger>
           </TabsList>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 });

@@ -13,7 +13,7 @@ export function ServiceAlert({
 }: ServiceAlertProps) {
   if (showServiceAlert) {
     return (
-      <Card className="mb-6 ring-2 ring-smart-gold/50 bg-smart-gold/5 border border-smart-gold">
+      <Card className="my-2 ring-2 ring-smart-gold/50 bg-smart-gold/5 border border-smart-gold">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-smart-gold mt-0.5" />
@@ -41,7 +41,7 @@ export function ServiceAlert({
   }
 
   return (
-    <div className="mb-6 flex justify-center">
+    <div className="my-2 flex justify-center">
       <Button
         variant="outline"
         size="sm"

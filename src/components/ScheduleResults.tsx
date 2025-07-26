@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, AlertCircle } from "lucide-react";
 import { TripCard } from "./TripCard";
@@ -41,29 +40,25 @@ export function ScheduleResults({
     : filteredTrips.slice(nextTripIndex >= 0 ? nextTripIndex : 0);
 
   return (
-    <Card
-      className="shadow-card"
-      role="region"
-      aria-labelledby="schedule-results-title"
-    >
-      <CardHeader>
-        <CardTitle
+    <>
+      <div className="flex flex-col space-y-1.5 p-6">
+        <h3
           id="schedule-results-title"
-          className="flex items-center gap-2"
+          className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2 mb-4"
         >
-          <Clock className="h-5 w-5 text-primary" aria-hidden="true" />
           {fromIndex < toIndex ? "Southbound" : "Northbound"} Schedule
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {fromStation} → {toStation} •{" "}
-          {scheduleType === "weekday" ? "Weekday" : "Weekend/Holiday"} • Current
-          time:{" "}
-          {currentTime.toLocaleTimeString([], {
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: timeFormat === "12h",
-          })}
-        </p>
+          <div className="flex-grow flex justify-end items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
+            {currentTime.toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: timeFormat === "12h",
+            })}
+            <Clock
+              className="inline-block h-5 w-5 text-primary"
+              aria-hidden="true"
+            />
+          </div>
+        </h3>
         {nextTripIndex > 0 && !showAllTrips && (
           <Button
             variant="outline"
@@ -86,8 +81,8 @@ export function ScheduleResults({
             Hide earlier trains
           </Button>
         )}
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className="p-6 pt-0">
         {nextTripIndex === -1 && !showAllTrips && (
           <div
             className="mb-4 p-3 bg-smart-gold/10 border border-smart-gold/20 rounded-lg"
@@ -138,7 +133,7 @@ export function ScheduleResults({
             );
           })}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 }
