@@ -35,16 +35,7 @@ export interface TrainTrip {
   ferry?: FerryConnection;
 }
 
-export interface DirectionSchedule {
-  trips: TrainTrip[];
-}
-
-export interface WeekdaySchedule {
-  southbound: DirectionSchedule;
-  northbound: DirectionSchedule;
-}
-
-export interface WeekendSchedule {
-  southbound: DirectionSchedule;
-  northbound: DirectionSchedule;
+export interface TrainSchedule {
+  southbound: TrainTrip[];
+  northbound: TrainTrip[];
 }

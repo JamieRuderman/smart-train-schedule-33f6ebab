@@ -1,0 +1,186 @@
+import stations from "@/data/stations";
+import weekdaySchedule from "@/data/weekdaySchedule";
+import weekendSchedule from "@/data/weekendSchedule";
+import type {
+  Station,
+  TrainTrip,
+  FerryConnection,
+} from "@/types/smartSchedule";
+
+// Pre-processed data structures
+export interface ProcessedTrip {
+  trip: number;
+  times: string[];
+  ferry?: FerryConnection;
+  departureTime: string;
+  arrivalTime: string;
+  fromStation: Station;
+  toStation: Station;
+  isValid: boolean; // Pre-calculated validity
+}
+
+export interface StationPair {
+  fromIndex: number;
+  toIndex: number;
+  direction: "southbound" | "northbound";
+  isSouthbound: boolean;
+}
+
+export interface ScheduleCache {
+  [key: string]: ProcessedTrip[]; // key: "fromStation-toStation-scheduleType"
+}
+
+// Pre-calculated lookup tables
+export const stationIndexMap: Record<Station, number> = stations.reduce(
+  (acc, station, index) => {
+    acc[station] = index;
+    return acc;
+  },
+  {} as Record<Station, number>
+);
+
+// Pre-calculate all possible station pairs
+export const stationPairs: Record<string, StationPair> = {};
+stations.forEach((fromStation, fromIndex) => {
+  stations.forEach((toStation, toIndex) => {
+    if (fromIndex !== toIndex) {
+      const key = `${fromStation}-${toStation}`;
+      const isSouthbound = fromIndex < toIndex;
+      stationPairs[key] = {
+        fromIndex,
+        toIndex,
+        direction: isSouthbound ? "southbound" : "northbound",
+        isSouthbound,
+      };
+    }
+  });
+});
+
+// Pre-process schedule data
+function processScheduleData(): ScheduleCache {
+  const cache: ScheduleCache = {};
+
+  // Process weekday schedule
+  Object.entries(weekdaySchedule).forEach(([direction, trips]) => {
+    trips.forEach((trip) => {
+      // Pre-calculate validity for all possible station combinations
+      stations.forEach((fromStation, fromIndex) => {
+        stations.forEach((toStation, toIndex) => {
+          if (fromIndex !== toIndex) {
+            const minIndex = Math.min(fromIndex, toIndex);
+            const maxIndex = Math.max(fromIndex, toIndex);
+            const departureTime = trip.times[minIndex];
+            const arrivalTime = trip.times[maxIndex];
+            const isValid =
+              !departureTime.includes("~~") && !arrivalTime.includes("~~");
+
+            if (isValid) {
+              const key = `${fromStation}-${toStation}-weekday`;
+              if (!cache[key]) cache[key] = [];
+
+              cache[key].push({
+                trip: trip.trip,
+                times: trip.times,
+                ferry: trip.ferry,
+                departureTime,
+                arrivalTime,
+                fromStation,
+                toStation,
+                isValid: true,
+              });
+            }
+          }
+        });
+      });
+    });
+  });
+
+  // Process weekend schedule
+  Object.entries(weekendSchedule).forEach(([direction, trips]) => {
+    trips.forEach((trip) => {
+      // Pre-calculate validity for all possible station combinations
+      stations.forEach((fromStation, fromIndex) => {
+        stations.forEach((toStation, toIndex) => {
+          if (fromIndex !== toIndex) {
+            const minIndex = Math.min(fromIndex, toIndex);
+            const maxIndex = Math.max(fromIndex, toIndex);
+            const departureTime = trip.times[minIndex];
+            const arrivalTime = trip.times[maxIndex];
+            const isValid =
+              !departureTime.includes("~~") && !arrivalTime.includes("~~");
+
+            if (isValid) {
+              const key = `${fromStation}-${toStation}-weekend`;
+              if (!cache[key]) cache[key] = [];
+
+              cache[key].push({
+                trip: trip.trip,
+                times: trip.times,
+                ferry: trip.ferry,
+                departureTime,
+                arrivalTime,
+                fromStation,
+                toStation,
+                isValid: true,
+              });
+            }
+          }
+        });
+      });
+    });
+  });
+
+  return cache;
+}
+
+// Pre-processed schedule cache
+export const scheduleCache = processScheduleData();
+
+// Fast lookup functions
+export function getStationIndex(station: Station): number {
+  return stationIndexMap[station];
+}
+
+export function getStationPair(
+  fromStation: Station,
+  toStation: Station
+): StationPair | null {
+  const key = `${fromStation}-${toStation}`;
+  return stationPairs[key] || null;
+}
+
+export function getFilteredTrips(
+  fromStation: Station,
+  toStation: Station,
+  scheduleType: "weekday" | "weekend"
+): ProcessedTrip[] {
+  const key = `${fromStation}-${toStation}-${scheduleType}`;
+  return scheduleCache[key] || [];
+}
+
+// Optimized time comparison
+export function isTimeInPast(currentTime: Date, timeString: string): boolean {
+  const cleanTime = timeString.replace(/\*/g, "");
+  const [hoursStr, minutesStr] = cleanTime.split(":");
+  const hours = parseInt(hoursStr, 10);
+  const minutes = parseInt(minutesStr, 10);
+
+  const tripTime = new Date();
+  tripTime.setHours(hours, minutes, 0, 0);
+  return tripTime < currentTime;
+}
+
+// Fast next trip calculation
+export function getNextTripIndex(
+  trips: ProcessedTrip[],
+  fromIndex: number,
+  currentTime: Date
+): number {
+  for (let i = 0; i < trips.length; i++) {
+    const departureTime = trips[i].times[fromIndex];
+    if (!isTimeInPast(currentTime, departureTime)) {
+      return i;
+    }
+  }
+  return -1;
+}
