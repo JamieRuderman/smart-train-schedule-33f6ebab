@@ -393,7 +393,7 @@ export function TrainScheduleApp() {
                     <div
                       key={trip.trip}
                       className={cn(
-                        "flex items-center justify-between p-4 rounded-lg border transition-all",
+                        "flex flex-col md:flex-row md:items-center md:justify-between p-4 rounded-lg border transition-all space-y-2 md:space-y-0",
                         isPastTrip && showAllTrips
                           ? "bg-muted/50 opacity-60 text-muted-foreground border-muted"
                           : "bg-gradient-card hover:shadow-md",
@@ -401,11 +401,11 @@ export function TrainScheduleApp() {
                           "ring-2 ring-smart-gold/50 bg-smart-gold/5"
                       )}
                     >
-                      <div className="flex items-center gap-4">
+                      <div className="flex flex-col md:flex-row md:items-center md:gap-4 space-y-2 md:space-y-0">
                         <Badge
                           variant="outline"
                           className={cn(
-                            "font-mono",
+                            "font-mono self-start",
                             isNextTrip && "border-smart-gold text-smart-gold",
                             isPastTrip &&
                               showAllTrips &&
@@ -433,18 +433,30 @@ export function TrainScheduleApp() {
                             {formatTime(trip.times[toIndex], period)}
                           </span>
                         </div>
-                        {isNextTrip && (
-                          <Badge
-                            variant="secondary"
-                            className="text-xs bg-smart-gold text-white"
-                          >
-                            Next Train
-                          </Badge>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {isNextTrip && (
+                            <Badge
+                              variant="secondary"
+                              className="text-xs bg-smart-gold text-white"
+                            >
+                              Next Train
+                            </Badge>
+                          )}
+                          {showFerry && (
+                            <Badge variant="secondary" className="text-xs">
+                              Ferry Connection
+                            </Badge>
+                          )}
+                        </div>
+                        {showFerry && (
+                          <p className="text-xs text-muted-foreground md:hidden">
+                            Departs {formatTime(trip.ferry.depart, period)}
+                          </p>
                         )}
                       </div>
 
                       {showFerry && (
-                        <div className="text-right">
+                        <div className="hidden md:block text-right">
                           <Badge variant="secondary" className="text-xs">
                             Ferry Connection
                           </Badge>
