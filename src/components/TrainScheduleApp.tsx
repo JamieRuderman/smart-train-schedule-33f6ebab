@@ -8,24 +8,22 @@ import { RouteSelector } from "./RouteSelector";
 import { ServiceAlert } from "./ServiceAlert";
 import { ScheduleResults } from "./ScheduleResults";
 
+// Helper function to determine if today is a weekend
+const isWeekend = (): boolean => {
+  const today = new Date().getDay();
+  return today === 0 || today === 6; // Sunday = 0, Saturday = 6
+};
+
 export function TrainScheduleApp() {
-  const {
-    preferences,
-    isLoaded,
-    updateLastSelected,
-    updateDefaultScheduleType,
-    updateShowAllTrips,
-  } = useUserPreferences();
+  const { preferences, isLoaded, updateLastSelected } = useUserPreferences();
 
   const [fromStation, setFromStation] = useState<Station | "">("");
   const [toStation, setToStation] = useState<Station | "">("");
   const [scheduleType, setScheduleType] = useState<"weekday" | "weekend">(
-    "weekday"
+    isWeekend() ? "weekend" : "weekday"
   );
   const [showAllTrips, setShowAllTrips] = useState<boolean>(false);
-  const [currentTime, setCurrentTime] = useState<Date>(
-    new Date("2025-07-25T16:00:00")
-  );
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [showServiceAlert, setShowServiceAlert] = useState(false);
 
   // Initialize state from user preferences once loaded
@@ -33,8 +31,7 @@ export function TrainScheduleApp() {
     if (isLoaded) {
       setFromStation(preferences.lastSelectedStations.from);
       setToStation(preferences.lastSelectedStations.to);
-      setScheduleType(preferences.defaultScheduleType);
-      setShowAllTrips(preferences.showAllTrips);
+      // Don't load schedule type from preferences - always use day-based default
     }
   }, [isLoaded, preferences]);
 
@@ -78,13 +75,12 @@ export function TrainScheduleApp() {
 
   const handleScheduleTypeChange = (type: "weekday" | "weekend") => {
     setScheduleType(type);
-    updateDefaultScheduleType(type);
+    // Don't persist schedule type - it should be determined by current day
   };
 
   const toggleShowAllTrips = () => {
     const newValue = !showAllTrips;
     setShowAllTrips(newValue);
-    updateShowAllTrips(newValue);
   };
 
   const toggleServiceAlert = () => {
@@ -126,7 +122,7 @@ export function TrainScheduleApp() {
           onScheduleTypeChange={handleScheduleTypeChange}
           onSwapStations={swapStations}
         />
-        @TODO: add way to change the now time or remove it
+
         {/* Schedule Results */}
         {filteredTrips.length > 0 && fromStation && toStation && (
           <ScheduleResults
@@ -139,7 +135,7 @@ export function TrainScheduleApp() {
             currentTime={currentTime}
             showAllTrips={showAllTrips}
             onToggleShowAllTrips={toggleShowAllTrips}
-            timeFormat={preferences.timeFormat}
+            timeFormat="12h"
           />
         )}
         {fromStation && toStation && filteredTrips.length === 0 && (

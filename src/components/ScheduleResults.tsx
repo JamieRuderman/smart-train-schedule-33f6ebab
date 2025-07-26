@@ -56,7 +56,13 @@ export function ScheduleResults({
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           {fromStation} → {toStation} •{" "}
-          {scheduleType === "weekday" ? "Weekday" : "Weekend/Holiday"}
+          {scheduleType === "weekday" ? "Weekday" : "Weekend/Holiday"} • Current
+          time:{" "}
+          {currentTime.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: timeFormat === "12h",
+          })}
         </p>
         {nextTripIndex > 0 && !showAllTrips && (
           <Button

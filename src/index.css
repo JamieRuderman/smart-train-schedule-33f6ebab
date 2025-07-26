@@ -26,7 +26,7 @@ All colors MUST be HSL.
     --muted: 0 0% 95%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: var(--smart-gold);
+    --accent: var(--smart-light-gold); /* smart-green with 50% opacity */
     --accent-foreground: var(--foreground);
 
     --destructive: 0 84.2% 60.2%;
@@ -41,6 +41,7 @@ All colors MUST be HSL.
     /* SMART Train brand colors - from official logo SVG */
     --smart-green: 143 72% 14%; /* #114533 from logo */
     --smart-gold: 27 85% 53%; /* #E48E25 from logo */
+    --smart-light-gold: hsl(var(--smart-gold) / 0.05); /* Transparent version of SMART gold */
     --smart-dark-green: 143 72% 10%; /* Darker green for depth */
     --smart-light-green: 143 72% 20%; /* Lighter green for accents */
 
@@ -99,7 +100,7 @@ All colors MUST be HSL.
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
 
-    --accent: var(--smart-gold);
+    --accent: var(--smart-light-gold); /* lighter smart-green with 60% opacity for dark mode */
     --accent-foreground: var(--foreground);
 
     --destructive: 0 62.8% 30.6%;
@@ -112,6 +113,7 @@ All colors MUST be HSL.
     /* SMART Train dark theme colors */
     --smart-green: 143 72% 20%; /* Lighter for dark mode */
     --smart-gold: 27 85% 60%; /* Brighter for dark mode */
+    --smart-light-gold: 27 85% 83%; /* #ffdfb7 from logo */
     --smart-dark-green: 143 72% 15%;
     --smart-light-green: 143 72% 25%;
 

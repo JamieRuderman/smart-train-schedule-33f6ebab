@@ -2,14 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import type { Station } from "@/types/smartSchedule";
 
 export interface UserPreferences {
-  favoriteRoutes: Array<{
-    from: Station;
-    to: Station;
-    name?: string;
-  }>;
-  defaultScheduleType: "weekday" | "weekend";
-  timeFormat: "12h" | "24h";
-  showAllTrips: boolean;
   lastSelectedStations: {
     from: Station | "";
     to: Station | "";
@@ -17,10 +9,6 @@ export interface UserPreferences {
 }
 
 const DEFAULT_PREFERENCES: UserPreferences = {
-  favoriteRoutes: [],
-  defaultScheduleType: "weekday",
-  timeFormat: "12h",
-  showAllTrips: false,
   lastSelectedStations: {
     from: "",
     to: "",
@@ -76,36 +64,9 @@ export function useUserPreferences() {
     [savePreferences]
   );
 
-  // Update default schedule type
-  const updateDefaultScheduleType = useCallback(
-    (type: "weekday" | "weekend") => {
-      savePreferences({ defaultScheduleType: type });
-    },
-    [savePreferences]
-  );
-
-  // Update time format preference
-  const updateTimeFormat = useCallback(
-    (format: "12h" | "24h") => {
-      savePreferences({ timeFormat: format });
-    },
-    [savePreferences]
-  );
-
-  // Update show all trips preference
-  const updateShowAllTrips = useCallback(
-    (show: boolean) => {
-      savePreferences({ showAllTrips: show });
-    },
-    [savePreferences]
-  );
-
   return {
     preferences,
     isLoaded,
     updateLastSelected,
-    updateDefaultScheduleType,
-    updateTimeFormat,
-    updateShowAllTrips,
   };
 }
