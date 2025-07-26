@@ -33,53 +33,31 @@ import type {
 
 // --- Helper Functions ---
 /**
- * Determines if a trip is AM or PM based on the direction schedule.
+ * Formats a 24-hour time string (e.g., "14:35") into 12-hour format with AM/PM.
  */
-function getTripPeriod(
-  trip: TrainTrip,
-  directionSchedule: DirectionSchedule
-): "am" | "pm" {
-  if (directionSchedule.am.some((t) => t.trip === trip.trip)) return "am";
-  if (directionSchedule.pm.some((t) => t.trip === trip.trip)) return "pm";
-  // fallback, should not happen
-  return "am";
-}
-
-/**
- * Formats a time string (e.g., "4:35") into 12-hour format with AM/PM.
- */
-const formatTime = (time: string, period: "am" | "pm") => {
+const formatTime = (time: string) => {
   const cleanTime = time.replace(/\*/g, "");
-  const [hoursRaw, minutesRaw] = cleanTime.split(":").map(Number);
-  let displayHours = hoursRaw;
-  if (period === "pm" && hoursRaw < 12) displayHours += 12;
-  if (period === "am" && hoursRaw === 12) displayHours = 0;
-  const shownHours =
-    displayHours === 0
-      ? 12
-      : displayHours > 12
-      ? displayHours - 12
-      : displayHours;
-  const shownPeriod = displayHours >= 12 ? "PM" : "AM";
-  return `${shownHours}:${minutesRaw
-    .toString()
-    .padStart(2, "0")} ${shownPeriod}`;
+  const [hoursStr, minutesStr] = cleanTime.split(":");
+  const hours = parseInt(hoursStr, 10);
+  const minutes = parseInt(minutesStr, 10);
+
+  const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+  const period = hours >= 12 ? "PM" : "AM";
+
+  return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
 };
 
 /**
- * Returns true if the given time (in AM/PM) is in the past compared to currentTimeParam.
+ * Returns true if the given 24-hour time is in the past compared to currentTimeParam.
  */
-const isTimeInPast = (
-  currentTimeParam: Date,
-  time: string,
-  period: "am" | "pm"
-) => {
-  const [hoursRaw, minutesRaw] = time.replace(/\*/g, "").split(":").map(Number);
-  let hours = hoursRaw;
-  if (period === "pm" && hours < 12) hours += 12;
-  if (period === "am" && hours === 12) hours = 0;
+const isTimeInPast = (currentTimeParam: Date, time: string) => {
+  const cleanTime = time.replace(/\*/g, "");
+  const [hoursStr, minutesStr] = cleanTime.split(":");
+  const hours = parseInt(hoursStr, 10);
+  const minutes = parseInt(minutesStr, 10);
+
   const tripTime = new Date();
-  tripTime.setHours(hours, minutesRaw, 0, 0);
+  tripTime.setHours(hours, minutes, 0, 0);
   return tripTime < currentTimeParam;
 };
 
@@ -92,7 +70,12 @@ interface StationSelectorProps {
   label: string;
 }
 
-function StationSelector({ value, onValueChange, placeholder, label }: StationSelectorProps) {
+function StationSelector({
+  value,
+  onValueChange,
+  placeholder,
+  label,
+}: StationSelectorProps) {
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium text-muted-foreground">
@@ -116,19 +99,13 @@ function StationSelector({ value, onValueChange, placeholder, label }: StationSe
 
 interface TimeDisplayProps {
   time: string;
-  period: "am" | "pm";
   isNextTrip?: boolean;
 }
 
-function TimeDisplay({ time, period, isNextTrip = false }: TimeDisplayProps) {
+function TimeDisplay({ time, isNextTrip = false }: TimeDisplayProps) {
   return (
-    <span
-      className={cn(
-        "font-medium",
-        isNextTrip && "text-smart-green"
-      )}
-    >
-      {formatTime(time, period)}
+    <span className={cn("font-medium", isNextTrip && "text-smart-green")}>
+      {formatTime(time)}
     </span>
   );
 }
@@ -140,7 +117,12 @@ interface TrainBadgeProps {
   showAllTrips?: boolean;
 }
 
-function TrainBadge({ tripNumber, isNextTrip = false, isPastTrip = false, showAllTrips = false }: TrainBadgeProps) {
+function TrainBadge({
+  tripNumber,
+  isNextTrip = false,
+  isPastTrip = false,
+  showAllTrips = false,
+}: TrainBadgeProps) {
   return (
     <Badge
       variant="outline"
@@ -157,10 +139,7 @@ function TrainBadge({ tripNumber, isNextTrip = false, isPastTrip = false, showAl
 
 function NextTrainBadge() {
   return (
-    <Badge
-      variant="secondary"
-      className="text-xs bg-primary text-white"
-    >
+    <Badge variant="secondary" className="text-xs bg-primary text-white">
       Next Train
     </Badge>
   );
@@ -168,19 +147,16 @@ function NextTrainBadge() {
 
 interface FerryConnectionProps {
   ferry: FerryConnection;
-  period: "am" | "pm";
   isMobile?: boolean;
 }
 
-function FerryConnection({ ferry, period, isMobile = false }: FerryConnectionProps) {
+function FerryConnection({ ferry, isMobile = false }: FerryConnectionProps) {
   if (isMobile) {
     return (
       <div className="flex items-center justify-between">
-        <Badge className="text-xs text-white">
-          Ferry Connection
-        </Badge>
+        <Badge className="text-xs text-white">Ferry Connection</Badge>
         <p className="text-xs text-muted-foreground">
-          Departs {formatTime(ferry.depart, period)}
+          Departs {formatTime(ferry.depart)}
         </p>
       </div>
     );
@@ -189,11 +165,9 @@ function FerryConnection({ ferry, period, isMobile = false }: FerryConnectionPro
   return (
     <div className="text-right">
       <span className="text-xs text-muted-foreground mr-4">
-        Departs {formatTime(ferry.depart, period)}
+        Departs {formatTime(ferry.depart)}
       </span>
-      <Badge className="text-xs text-white">
-        Ferry Connection
-      </Badge>
+      <Badge className="text-xs text-white">Ferry Connection</Badge>
     </div>
   );
 }
@@ -202,7 +176,6 @@ interface TripCardProps {
   trip: TrainTrip;
   fromIndex: number;
   toIndex: number;
-  directionSchedule: DirectionSchedule;
   currentTime: Date;
   isNextTrip: boolean;
   isPastTrip: boolean;
@@ -210,19 +183,16 @@ interface TripCardProps {
   showFerry: boolean;
 }
 
-function TripCard({ 
-  trip, 
-  fromIndex, 
-  toIndex, 
-  directionSchedule, 
-  currentTime, 
-  isNextTrip, 
-  isPastTrip, 
-  showAllTrips, 
-  showFerry 
+function TripCard({
+  trip,
+  fromIndex,
+  toIndex,
+  currentTime,
+  isNextTrip,
+  isPastTrip,
+  showAllTrips,
+  showFerry,
 }: TripCardProps) {
-  const period = getTripPeriod(trip, directionSchedule);
-
   return (
     <div
       className={cn(
@@ -235,47 +205,47 @@ function TripCard({
       <div className="flex flex-col space-y-2 md:hidden">
         {/* Train # and Next Train badge */}
         <div className="flex items-center justify-between">
-          <TrainBadge 
-            tripNumber={trip.trip} 
-            isNextTrip={isNextTrip} 
-            isPastTrip={isPastTrip} 
-            showAllTrips={showAllTrips} 
+          <TrainBadge
+            tripNumber={trip.trip}
+            isNextTrip={isNextTrip}
+            isPastTrip={isPastTrip}
+            showAllTrips={showAllTrips}
           />
           {isNextTrip && <NextTrainBadge />}
         </div>
 
         {/* Times */}
         <div className="flex items-center gap-2 text-sm">
-          <TimeDisplay time={trip.times[fromIndex]} period={period} isNextTrip={isNextTrip} />
+          <TimeDisplay time={trip.times[fromIndex]} isNextTrip={isNextTrip} />
           <span className="text-muted-foreground">→</span>
-          <TimeDisplay time={trip.times[toIndex]} period={period} isNextTrip={isNextTrip} />
+          <TimeDisplay time={trip.times[toIndex]} isNextTrip={isNextTrip} />
         </div>
 
         {/* Ferry info - only if ferry exists */}
         {showFerry && trip.ferry && (
-          <FerryConnection ferry={trip.ferry} period={period} isMobile={true} />
+          <FerryConnection ferry={trip.ferry} isMobile={true} />
         )}
       </div>
 
       {/* Desktop Layout */}
       <div className="hidden md:flex md:items-center md:gap-4">
-        <TrainBadge 
-          tripNumber={trip.trip} 
-          isNextTrip={isNextTrip} 
-          isPastTrip={isPastTrip} 
-          showAllTrips={showAllTrips} 
+        <TrainBadge
+          tripNumber={trip.trip}
+          isNextTrip={isNextTrip}
+          isPastTrip={isPastTrip}
+          showAllTrips={showAllTrips}
         />
         <div className="flex items-center gap-2 text-sm">
-          <TimeDisplay time={trip.times[fromIndex]} period={period} isNextTrip={isNextTrip} />
+          <TimeDisplay time={trip.times[fromIndex]} isNextTrip={isNextTrip} />
           <span className="text-muted-foreground">→</span>
-          <TimeDisplay time={trip.times[toIndex]} period={period} isNextTrip={isNextTrip} />
+          <TimeDisplay time={trip.times[toIndex]} isNextTrip={isNextTrip} />
         </div>
         {isNextTrip && <NextTrainBadge />}
       </div>
 
       {showFerry && trip.ferry && (
         <div className="hidden md:block">
-          <FerryConnection ferry={trip.ferry} period={period} isMobile={false} />
+          <FerryConnection ferry={trip.ferry} isMobile={false} />
         </div>
       )}
     </div>
@@ -311,29 +281,9 @@ export function TrainScheduleApp() {
     const direction = southbound ? "southbound" : "northbound";
     let schedule: TrainTrip[];
     if (scheduleType === "weekday") {
-      if (direction === "southbound") {
-        schedule = [
-          ...weekdaySchedule.southbound.am,
-          ...weekdaySchedule.southbound.pm,
-        ];
-      } else {
-        schedule = [
-          ...weekdaySchedule.northbound.am,
-          ...weekdaySchedule.northbound.pm,
-        ];
-      }
+      schedule = weekdaySchedule[direction].trips;
     } else {
-      if (direction === "southbound") {
-        schedule = [
-          ...weekendSchedule.southbound.am,
-          ...weekendSchedule.southbound.pm,
-        ];
-      } else {
-        schedule = [
-          ...weekendSchedule.northbound.am,
-          ...weekendSchedule.northbound.pm,
-        ];
-      }
+      schedule = weekendSchedule[direction].trips;
     }
     return schedule
       .map((trip) => ({
@@ -350,37 +300,19 @@ export function TrainScheduleApp() {
   }, [fromStation, toStation, scheduleType, fromIndex, toIndex]);
 
   // getNextTripIndex and nextTripIndex must be declared after filteredTrips and currentTime
-  const getNextTripIndex = (
-    trips: TrainTrip[],
-    directionSchedule: DirectionSchedule
-  ) => {
+  const getNextTripIndex = (trips: TrainTrip[]) => {
     for (let i = 0; i < trips.length; i++) {
-      const period = getTripPeriod(trips[i], directionSchedule);
       // Use the correct departure time based on fromIndex
       const departureTime = trips[i].times[fromIndex];
-      if (!isTimeInPast(currentTime, departureTime, period)) {
+      if (!isTimeInPast(currentTime, departureTime)) {
         return i;
       }
     }
     return -1; // No future trips today
   };
-  // Determine the correct directionSchedule for the current selection
-  let directionSchedule: DirectionSchedule | undefined = undefined;
-  if (fromIndex !== -1 && toIndex !== -1) {
-    const southbound = fromIndex < toIndex;
-    if (scheduleType === "weekday") {
-      directionSchedule = southbound
-        ? weekdaySchedule.southbound
-        : weekdaySchedule.northbound;
-    } else {
-      directionSchedule = southbound
-        ? weekendSchedule.southbound
-        : weekendSchedule.northbound;
-    }
-  }
-  const nextTripIndex = directionSchedule
-    ? getNextTripIndex(filteredTrips, directionSchedule)
-    : -1;
+
+  const nextTripIndex =
+    filteredTrips.length > 0 ? getNextTripIndex(filteredTrips) : -1;
 
   const swapStations = () => {
     const temp = fromStation;
@@ -555,25 +487,17 @@ export function TrainScheduleApp() {
               )}
               <div className="space-y-3">
                 {displayedTrips.map((trip, index) => {
-                  const period = directionSchedule
-                    ? getTripPeriod(trip, directionSchedule)
-                    : "am";
                   const isPastTrip = isTimeInPast(
                     currentTime,
-                    trip.times[fromIndex],
-                    period
+                    trip.times[fromIndex]
                   );
                   // Find the next trip using the same time logic as isPastTrip
                   const isNextTrip =
                     !isPastTrip &&
                     displayedTrips.slice(0, index).every((prevTrip) => {
-                      const prevPeriod = directionSchedule
-                        ? getTripPeriod(prevTrip, directionSchedule)
-                        : "am";
                       return isTimeInPast(
                         currentTime,
-                        prevTrip.times[fromIndex],
-                        prevPeriod
+                        prevTrip.times[fromIndex]
                       );
                     });
                   const showFerry = trip.ferry && toStation === "Larkspur";
@@ -584,7 +508,6 @@ export function TrainScheduleApp() {
                       trip={trip}
                       fromIndex={fromIndex}
                       toIndex={toIndex}
-                      directionSchedule={directionSchedule!}
                       currentTime={currentTime}
                       isNextTrip={isNextTrip}
                       isPastTrip={isPastTrip}

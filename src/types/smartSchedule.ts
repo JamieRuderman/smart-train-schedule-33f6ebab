@@ -36,8 +36,7 @@ export interface TrainTrip {
 }
 
 export interface DirectionSchedule {
-  am: TrainTrip[];
-  pm: TrainTrip[];
+  trips: TrainTrip[];
 }
 
 export interface WeekdaySchedule {
