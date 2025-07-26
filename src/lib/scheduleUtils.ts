@@ -19,19 +19,19 @@ export interface ProcessedTrip {
   isValid: boolean; // Pre-calculated validity
 }
 
-export interface StationPair {
+interface StationPair {
   fromIndex: number;
   toIndex: number;
   direction: "southbound" | "northbound";
   isSouthbound: boolean;
 }
 
-export interface ScheduleCache {
+interface ScheduleCache {
   [key: string]: ProcessedTrip[]; // key: "fromStation-toStation-scheduleType"
 }
 
 // Pre-calculated lookup tables
-export const stationIndexMap: Record<Station, number> = stations.reduce(
+const stationIndexMap: Record<Station, number> = stations.reduce(
   (acc, station, index) => {
     acc[station] = index;
     return acc;
@@ -39,8 +39,8 @@ export const stationIndexMap: Record<Station, number> = stations.reduce(
   {} as Record<Station, number>
 );
 
-// Pre-calculate all possible station pairs
-export const stationPairs: Record<string, StationPair> = {};
+// Pre-calculate all possible station pairs (used for pre-processing)
+const stationPairs: Record<string, StationPair> = {};
 stations.forEach((fromStation, fromIndex) => {
   stations.forEach((toStation, toIndex) => {
     if (fromIndex !== toIndex) {
@@ -67,27 +67,34 @@ function processScheduleData(): ScheduleCache {
       stations.forEach((fromStation, fromIndex) => {
         stations.forEach((toStation, toIndex) => {
           if (fromIndex !== toIndex) {
-            const minIndex = Math.min(fromIndex, toIndex);
-            const maxIndex = Math.max(fromIndex, toIndex);
-            const departureTime = trip.times[minIndex];
-            const arrivalTime = trip.times[maxIndex];
-            const isValid =
-              !departureTime.includes("~~") && !arrivalTime.includes("~~");
+            // Get the correct direction for this station pair
+            const pairKey = `${fromStation}-${toStation}`;
+            const stationPair = stationPairs[pairKey];
 
-            if (isValid) {
-              const key = `${fromStation}-${toStation}-weekday`;
-              if (!cache[key]) cache[key] = [];
+            // Only include trips that match the correct direction for this station pair
+            if (stationPair && stationPair.direction === direction) {
+              const minIndex = Math.min(fromIndex, toIndex);
+              const maxIndex = Math.max(fromIndex, toIndex);
+              const departureTime = trip.times[minIndex];
+              const arrivalTime = trip.times[maxIndex];
+              const isValid =
+                !departureTime.includes("~~") && !arrivalTime.includes("~~");
 
-              cache[key].push({
-                trip: trip.trip,
-                times: trip.times,
-                ferry: trip.ferry,
-                departureTime,
-                arrivalTime,
-                fromStation,
-                toStation,
-                isValid: true,
-              });
+              if (isValid) {
+                const key = `${fromStation}-${toStation}-weekday`;
+                if (!cache[key]) cache[key] = [];
+
+                cache[key].push({
+                  trip: trip.trip,
+                  times: trip.times,
+                  ferry: trip.ferry,
+                  departureTime,
+                  arrivalTime,
+                  fromStation,
+                  toStation,
+                  isValid: true,
+                });
+              }
             }
           }
         });
@@ -102,27 +109,34 @@ function processScheduleData(): ScheduleCache {
       stations.forEach((fromStation, fromIndex) => {
         stations.forEach((toStation, toIndex) => {
           if (fromIndex !== toIndex) {
-            const minIndex = Math.min(fromIndex, toIndex);
-            const maxIndex = Math.max(fromIndex, toIndex);
-            const departureTime = trip.times[minIndex];
-            const arrivalTime = trip.times[maxIndex];
-            const isValid =
-              !departureTime.includes("~~") && !arrivalTime.includes("~~");
+            // Get the correct direction for this station pair
+            const pairKey = `${fromStation}-${toStation}`;
+            const stationPair = stationPairs[pairKey];
 
-            if (isValid) {
-              const key = `${fromStation}-${toStation}-weekend`;
-              if (!cache[key]) cache[key] = [];
+            // Only include trips that match the correct direction for this station pair
+            if (stationPair && stationPair.direction === direction) {
+              const minIndex = Math.min(fromIndex, toIndex);
+              const maxIndex = Math.max(fromIndex, toIndex);
+              const departureTime = trip.times[minIndex];
+              const arrivalTime = trip.times[maxIndex];
+              const isValid =
+                !departureTime.includes("~~") && !arrivalTime.includes("~~");
 
-              cache[key].push({
-                trip: trip.trip,
-                times: trip.times,
-                ferry: trip.ferry,
-                departureTime,
-                arrivalTime,
-                fromStation,
-                toStation,
-                isValid: true,
-              });
+              if (isValid) {
+                const key = `${fromStation}-${toStation}-weekend`;
+                if (!cache[key]) cache[key] = [];
+
+                cache[key].push({
+                  trip: trip.trip,
+                  times: trip.times,
+                  ferry: trip.ferry,
+                  departureTime,
+                  arrivalTime,
+                  fromStation,
+                  toStation,
+                  isValid: true,
+                });
+              }
             }
           }
         });
@@ -134,20 +148,14 @@ function processScheduleData(): ScheduleCache {
 }
 
 // Pre-processed schedule cache
-export const scheduleCache = processScheduleData();
+const scheduleCache = processScheduleData();
 
 // Fast lookup functions
 export function getStationIndex(station: Station): number {
   return stationIndexMap[station];
 }
 
-export function getStationPair(
-  fromStation: Station,
-  toStation: Station
-): StationPair | null {
-  const key = `${fromStation}-${toStation}`;
-  return stationPairs[key] || null;
-}
+
 
 export function getFilteredTrips(
   fromStation: Station,
@@ -158,17 +166,21 @@ export function getFilteredTrips(
   return scheduleCache[key] || [];
 }
 
-// Optimized time comparison
+// Optimized time comparison with proper timezone handling
 export function isTimeInPast(currentTime: Date, timeString: string): boolean {
   const cleanTime = timeString.replace(/\*/g, "");
   const [hoursStr, minutesStr] = cleanTime.split(":");
   const hours = parseInt(hoursStr, 10);
   const minutes = parseInt(minutesStr, 10);
 
-  const tripTime = new Date();
+  // Create a new date for today with the specific time
+  const tripTime = new Date(currentTime);
   tripTime.setHours(hours, minutes, 0, 0);
+
   return tripTime < currentTime;
 }
+
+
 
 // Fast next trip calculation
 export function getNextTripIndex(

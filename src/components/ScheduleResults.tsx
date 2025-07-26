@@ -16,6 +16,7 @@ interface ScheduleResultsProps {
   currentTime: Date;
   showAllTrips: boolean;
   onToggleShowAllTrips: () => void;
+  timeFormat: "12h" | "24h";
 }
 
 export function ScheduleResults({
@@ -28,6 +29,7 @@ export function ScheduleResults({
   currentTime,
   showAllTrips,
   onToggleShowAllTrips,
+  timeFormat,
 }: ScheduleResultsProps) {
   const nextTripIndex =
     filteredTrips.length > 0
@@ -39,11 +41,18 @@ export function ScheduleResults({
     : filteredTrips.slice(nextTripIndex >= 0 ? nextTripIndex : 0);
 
   return (
-    <Card className="shadow-card">
+    <Card
+      className="shadow-card"
+      role="region"
+      aria-labelledby="schedule-results-title"
+    >
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Clock className="h-5 w-5 text-primary" />
-          Schedule Results
+        <CardTitle
+          id="schedule-results-title"
+          className="flex items-center gap-2"
+        >
+          <Clock className="h-5 w-5 text-primary" aria-hidden="true" />
+          {fromIndex < toIndex ? "Southbound" : "Northbound"} Schedule
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           {fromStation} → {toStation} •{" "}
@@ -55,8 +64,9 @@ export function ScheduleResults({
             size="sm"
             onClick={onToggleShowAllTrips}
             className="mt-2"
+            aria-label="Show earlier trains"
           >
-            Show earlier trains ({nextTripIndex} hidden)
+            Show earlier trains
           </Button>
         )}
         {showAllTrips && (
@@ -65,6 +75,7 @@ export function ScheduleResults({
             size="sm"
             onClick={onToggleShowAllTrips}
             className="mt-2"
+            aria-label="Hide earlier trains that have already departed"
           >
             Hide earlier trains
           </Button>
@@ -72,9 +83,16 @@ export function ScheduleResults({
       </CardHeader>
       <CardContent>
         {nextTripIndex === -1 && !showAllTrips && (
-          <div className="mb-4 p-3 bg-smart-gold/10 border border-smart-gold/20 rounded-lg">
+          <div
+            className="mb-4 p-3 bg-smart-gold/10 border border-smart-gold/20 rounded-lg"
+            role="alert"
+            aria-live="polite"
+          >
             <div className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 text-smart-gold" />
+              <AlertCircle
+                className="h-4 w-4 text-smart-gold"
+                aria-hidden="true"
+              />
               <p className="text-smart-gold font-medium">
                 No more trains today
               </p>
@@ -84,7 +102,11 @@ export function ScheduleResults({
             </p>
           </div>
         )}
-        <div className="space-y-3">
+        <div
+          className="space-y-3"
+          role="list"
+          aria-label="Train schedule results"
+        >
           {displayedTrips.map((trip, index) => {
             const isPastTrip = isTimeInPast(currentTime, trip.times[fromIndex]);
             // Find the next trip using the same time logic as isPastTrip
@@ -101,11 +123,11 @@ export function ScheduleResults({
                 trip={trip}
                 fromIndex={fromIndex}
                 toIndex={toIndex}
-                currentTime={currentTime}
                 isNextTrip={isNextTrip}
                 isPastTrip={isPastTrip}
                 showAllTrips={showAllTrips}
                 showFerry={showFerry}
+                timeFormat={timeFormat}
               />
             );
           })}

@@ -1,8 +1,22 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "smart-train-schedule",
+  "description": "A modern, responsive web application for viewing SMART train schedules and ferry connections",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "keywords": [
+    "SMART",
+    "train",
+    "schedule",
+    "transit",
+    "Sonoma-Marin"
+  ],
+  "author": "SMART Train Schedule Team",
+  "homepage": ".",
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

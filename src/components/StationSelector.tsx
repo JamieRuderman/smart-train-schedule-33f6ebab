@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
   Select,
   SelectContent,
@@ -15,7 +16,7 @@ interface StationSelectorProps {
   label: string;
 }
 
-export function StationSelector({
+export const StationSelector = memo(function StationSelector({
   value,
   onValueChange,
   placeholder,
@@ -23,16 +24,22 @@ export function StationSelector({
 }: StationSelectorProps) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-muted-foreground">
+      <label
+        htmlFor={`station-select-${label.toLowerCase()}`}
+        className="text-sm font-medium text-muted-foreground"
+      >
         {label}
       </label>
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger>
+        <SelectTrigger
+          id={`station-select-${label.toLowerCase()}`}
+          aria-label={`Select ${label.toLowerCase()} station`}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent role="listbox" aria-label="Available stations">
           {stations.map((station) => (
-            <SelectItem key={station} value={station}>
+            <SelectItem key={station} value={station} role="option">
               {station}
             </SelectItem>
           ))}
@@ -40,4 +47,4 @@ export function StationSelector({
       </Select>
     </div>
   );
-}
+});
