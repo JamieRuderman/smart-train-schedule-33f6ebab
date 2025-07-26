@@ -383,9 +383,16 @@ export function TrainScheduleApp() {
                     trip.times[fromIndex],
                     period
                   );
-                  // Find the next trip that hasn't departed yet
-                  const nextTrip = nextTripIndex >= 0 ? filteredTrips[nextTripIndex] : null;
-                  const isNextTrip = nextTrip && trip.trip === nextTrip.trip && !isPastTrip;
+                  // Find the next trip using the same time logic as isPastTrip
+                  const isNextTrip = !isPastTrip && 
+                    displayedTrips
+                      .slice(0, index)
+                      .every(prevTrip => {
+                        const prevPeriod = directionSchedule
+                          ? getTripPeriod(prevTrip, directionSchedule)
+                          : "am";
+                        return isTimeInPast(currentTime, prevTrip.times[fromIndex], prevPeriod);
+                      });
                   const showFerry = trip.ferry && toStation === "Larkspur";
 
                   return (
