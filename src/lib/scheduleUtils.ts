@@ -1,10 +1,13 @@
-import stations from "@/data/stations";
+import stations, { stationZoneMap } from "@/data/stations";
 import weekdaySchedule from "@/data/weekdaySchedule";
 import weekendSchedule from "@/data/weekendSchedule";
 import type {
   Station,
   TrainTrip,
   FerryConnection,
+  FareType,
+  FareInfo,
+  PaymentMethod,
 } from "@/types/smartSchedule";
 
 // Pre-processed data structures
@@ -61,88 +64,92 @@ function processScheduleData(): ScheduleCache {
   const cache: ScheduleCache = {};
 
   // Process weekday schedule
-  Object.entries(weekdaySchedule).forEach(([direction, trips]) => {
-    trips.forEach((trip) => {
-      // Pre-calculate validity for all possible station combinations
-      stations.forEach((fromStation, fromIndex) => {
-        stations.forEach((toStation, toIndex) => {
-          if (fromIndex !== toIndex) {
-            // Get the correct direction for this station pair
-            const pairKey = `${fromStation}-${toStation}`;
-            const stationPair = stationPairs[pairKey];
+  (Object.entries(weekdaySchedule) as [string, TrainTrip[]][]).forEach(
+    ([direction, trips]) => {
+      trips.forEach((trip) => {
+        // Pre-calculate validity for all possible station combinations
+        stations.forEach((fromStation, fromIndex) => {
+          stations.forEach((toStation, toIndex) => {
+            if (fromIndex !== toIndex) {
+              // Get the correct direction for this station pair
+              const pairKey = `${fromStation}-${toStation}`;
+              const stationPair = stationPairs[pairKey];
 
-            // Only include trips that match the correct direction for this station pair
-            if (stationPair && stationPair.direction === direction) {
-              const minIndex = Math.min(fromIndex, toIndex);
-              const maxIndex = Math.max(fromIndex, toIndex);
-              const departureTime = trip.times[minIndex];
-              const arrivalTime = trip.times[maxIndex];
-              const isValid =
-                !departureTime.includes("~~") && !arrivalTime.includes("~~");
+              // Only include trips that match the correct direction for this station pair
+              if (stationPair && stationPair.direction === direction) {
+                const minIndex = Math.min(fromIndex, toIndex);
+                const maxIndex = Math.max(fromIndex, toIndex);
+                const departureTime = trip.times[minIndex];
+                const arrivalTime = trip.times[maxIndex];
+                const isValid =
+                  !departureTime.includes("~~") && !arrivalTime.includes("~~");
 
-              if (isValid) {
-                const key = `${fromStation}-${toStation}-weekday`;
-                if (!cache[key]) cache[key] = [];
+                if (isValid) {
+                  const key = `${fromStation}-${toStation}-weekday`;
+                  if (!cache[key]) cache[key] = [];
 
-                cache[key].push({
-                  trip: trip.trip,
-                  times: trip.times,
-                  ferry: trip.ferry,
-                  departureTime,
-                  arrivalTime,
-                  fromStation,
-                  toStation,
-                  isValid: true,
-                });
+                  cache[key].push({
+                    trip: trip.trip,
+                    times: trip.times,
+                    ferry: trip.ferry,
+                    departureTime,
+                    arrivalTime,
+                    fromStation,
+                    toStation,
+                    isValid: true,
+                  });
+                }
               }
             }
-          }
+          });
         });
       });
-    });
-  });
+    }
+  );
 
   // Process weekend schedule
-  Object.entries(weekendSchedule).forEach(([direction, trips]) => {
-    trips.forEach((trip) => {
-      // Pre-calculate validity for all possible station combinations
-      stations.forEach((fromStation, fromIndex) => {
-        stations.forEach((toStation, toIndex) => {
-          if (fromIndex !== toIndex) {
-            // Get the correct direction for this station pair
-            const pairKey = `${fromStation}-${toStation}`;
-            const stationPair = stationPairs[pairKey];
+  (Object.entries(weekendSchedule) as [string, TrainTrip[]][]).forEach(
+    ([direction, trips]) => {
+      trips.forEach((trip) => {
+        // Pre-calculate validity for all possible station combinations
+        stations.forEach((fromStation, fromIndex) => {
+          stations.forEach((toStation, toIndex) => {
+            if (fromIndex !== toIndex) {
+              // Get the correct direction for this station pair
+              const pairKey = `${fromStation}-${toStation}`;
+              const stationPair = stationPairs[pairKey];
 
-            // Only include trips that match the correct direction for this station pair
-            if (stationPair && stationPair.direction === direction) {
-              const minIndex = Math.min(fromIndex, toIndex);
-              const maxIndex = Math.max(fromIndex, toIndex);
-              const departureTime = trip.times[minIndex];
-              const arrivalTime = trip.times[maxIndex];
-              const isValid =
-                !departureTime.includes("~~") && !arrivalTime.includes("~~");
+              // Only include trips that match the correct direction for this station pair
+              if (stationPair && stationPair.direction === direction) {
+                const minIndex = Math.min(fromIndex, toIndex);
+                const maxIndex = Math.max(fromIndex, toIndex);
+                const departureTime = trip.times[minIndex];
+                const arrivalTime = trip.times[maxIndex];
+                const isValid =
+                  !departureTime.includes("~~") && !arrivalTime.includes("~~");
 
-              if (isValid) {
-                const key = `${fromStation}-${toStation}-weekend`;
-                if (!cache[key]) cache[key] = [];
+                if (isValid) {
+                  const key = `${fromStation}-${toStation}-weekend`;
+                  if (!cache[key]) cache[key] = [];
 
-                cache[key].push({
-                  trip: trip.trip,
-                  times: trip.times,
-                  ferry: trip.ferry,
-                  departureTime,
-                  arrivalTime,
-                  fromStation,
-                  toStation,
-                  isValid: true,
-                });
+                  cache[key].push({
+                    trip: trip.trip,
+                    times: trip.times,
+                    ferry: trip.ferry,
+                    departureTime,
+                    arrivalTime,
+                    fromStation,
+                    toStation,
+                    isValid: true,
+                  });
+                }
               }
             }
-          }
+          });
         });
       });
-    });
-  });
+    }
+  );
 
   return cache;
 }
@@ -154,8 +161,6 @@ const scheduleCache = processScheduleData();
 export function getStationIndex(station: Station): number {
   return stationIndexMap[station];
 }
-
-
 
 export function getFilteredTrips(
   fromStation: Station,
@@ -180,8 +185,6 @@ export function isTimeInPast(currentTime: Date, timeString: string): boolean {
   return tripTime < currentTime;
 }
 
-
-
 // Fast next trip calculation
 export function getNextTripIndex(
   trips: ProcessedTrip[],
@@ -195,4 +198,77 @@ export function getNextTripIndex(
     }
   }
   return -1;
+}
+
+// Fare calculation utilities
+export function getStationZone(station: Station): number {
+  return stationZoneMap[station] || 0;
+}
+
+export function calculateZonesBetweenStations(
+  fromStation: Station,
+  toStation: Station
+): number {
+  const fromZone = getStationZone(fromStation);
+  const toZone = getStationZone(toStation);
+  return Math.abs(toZone - fromZone) + 1; // Include both zones in the calculation
+}
+
+export function calculateFare(
+  fromStation: Station,
+  toStation: Station,
+  fareType: FareType,
+  paymentMethod: PaymentMethod = "clipper"
+): FareInfo {
+  const zones = calculateZonesBetweenStations(fromStation, toStation);
+
+  let price = 0;
+  let description = "";
+
+  switch (fareType) {
+    case "adult":
+      price = zones * 1.5;
+      description = "Adult (19-64)";
+      break;
+    case "youth":
+      price = 0;
+      description = "Youth (0-18) - Free";
+      break;
+    case "senior":
+      price = 0;
+      description = "Senior (65+) - Free";
+      break;
+    case "disabled":
+      price = zones * 0.75;
+      description = "Disabled/Medicare - 50% off";
+      break;
+    case "clipper-start":
+      price = zones * 0.75;
+      description = "Clipper START - 50% off";
+      break;
+  }
+
+  return {
+    fareType,
+    paymentMethod,
+    zones,
+    price,
+    description,
+  };
+}
+
+export function getAllFareOptions(
+  fromStation: Station,
+  toStation: Station
+): FareInfo[] {
+  const fareTypes: FareType[] = [
+    "adult",
+    "youth",
+    "senior",
+    "disabled",
+    "clipper-start",
+  ];
+  return fareTypes.map((fareType) =>
+    calculateFare(fromStation, toStation, fareType)
+  );
 }

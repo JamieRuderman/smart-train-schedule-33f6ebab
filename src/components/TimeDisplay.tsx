@@ -36,7 +36,7 @@ export const TimeDisplay = memo(function TimeDisplay({
 }: TimeDisplayProps) {
   return (
     <span
-      className={cn("font-medium", isNextTrip && "text-smart-green")}
+      className={cn("font-medium", isNextTrip && "text-smart-train-green")}
       title={`${formatTime(time, "12h")} (${formatTime(time, "24h")})`}
     >
       {formatTime(time, format)}

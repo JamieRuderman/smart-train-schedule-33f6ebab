@@ -2,12 +2,13 @@ import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import smartLogo from "@/assets/smart-logo.svg";
-import type { Station } from "@/types/smartSchedule";
+import type { Station, FareType } from "@/types/smartSchedule";
 import { getFilteredTrips, getStationIndex } from "@/lib/scheduleUtils";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { RouteSelector } from "./RouteSelector";
 import { ServiceAlert } from "./ServiceAlert";
 import { ScheduleResults } from "./ScheduleResults";
+import { FareSection } from "./FareSection";
 
 // Helper function to determine if today is a weekend
 const isWeekend = (): boolean => {
@@ -26,6 +27,9 @@ export function TrainScheduleApp() {
   const [showAllTrips, setShowAllTrips] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [showServiceAlert, setShowServiceAlert] = useState(false);
+  const [selectedFareType, setSelectedFareType] = useState<FareType | "none">(
+    "none"
+  );
 
   // Initialize state from user preferences once loaded
   useEffect(() => {
@@ -88,11 +92,15 @@ export function TrainScheduleApp() {
     setShowServiceAlert(!showServiceAlert);
   };
 
+  const handleFareTypeChange = (fareType: FareType | "none") => {
+    setSelectedFareType(fareType);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header
-        className="container mx-auto px-4 py-6 flex flex-col items-center gap-3 bg-smart-gold"
+        className="container mx-auto px-4 py-6 flex flex-col items-center gap-3 bg-smart-train-green"
         role="banner"
       >
         <img
@@ -108,11 +116,6 @@ export function TrainScheduleApp() {
         role="main"
         aria-label="Train schedule planning interface"
       >
-        {/* Service Alerts */}
-        <ServiceAlert
-          showServiceAlert={showServiceAlert}
-          onToggleServiceAlert={toggleServiceAlert}
-        />
         {/* Route Selector */}
         <RouteSelector
           fromStation={fromStation}
@@ -122,6 +125,11 @@ export function TrainScheduleApp() {
           onToStationChange={handleToStationChange}
           onScheduleTypeChange={handleScheduleTypeChange}
           onSwapStations={swapStations}
+        />
+        {/* Service Alerts */}
+        <ServiceAlert
+          showServiceAlert={showServiceAlert}
+          onToggleServiceAlert={toggleServiceAlert}
         />
 
         {/* Schedule Results */}
@@ -150,6 +158,19 @@ export function TrainScheduleApp() {
               </p>
             </CardContent>
           </Card>
+        )}
+
+        {/* Fare Section */}
+        {fromStation && toStation && (
+          <>
+            <Separator className="my-4" />
+            <FareSection
+              fromStation={fromStation}
+              toStation={toStation}
+              selectedFareType={selectedFareType}
+              onFareTypeChange={handleFareTypeChange}
+            />
+          </>
         )}
       </main>
     </div>

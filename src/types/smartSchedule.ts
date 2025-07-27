@@ -17,6 +17,29 @@ export type Station =
 
 export const STATION_COUNT = 14;
 
+// Fare-related types
+export type FareType = 
+  | "adult"
+  | "youth" 
+  | "senior"
+  | "disabled"
+  | "clipper-start";
+
+export type PaymentMethod = "clipper" | "eticket";
+
+export interface FareInfo {
+  fareType: FareType;
+  paymentMethod: PaymentMethod;
+  zones: number;
+  price: number;
+  description: string;
+}
+
+export interface StationZone {
+  station: Station;
+  zone: number;
+}
+
 export interface FerryConnection {
   depart: string;
   arrive: string;

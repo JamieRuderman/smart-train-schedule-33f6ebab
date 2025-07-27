@@ -19,7 +19,7 @@ export function TrainBadge({
       variant="outline"
       className={cn(
         "font-mono",
-        isNextTrip && "border-smart-green text-smart-green",
+        isNextTrip && "border-smart-train-green text-smart-train-green",
         isPastTrip && showAllTrips && "border-muted-foreground/30"
       )}
     >

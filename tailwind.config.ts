@@ -64,7 +64,9 @@ export default {
         },
         // SMART Train brand colors - from official logo SVG
         smart: {
-          green: "hsl(var(--smart-green))" /* #114533 */,
+          green: "hsl(var(--smart-green))" /* #114533 - logo only */,
+          "train-green":
+            "hsl(var(--smart-train-green))" /* #11ab75 - main UI */,
           gold: "hsl(var(--smart-gold))" /* #E48E25 */,
           "dark-green": "hsl(var(--smart-dark-green))",
           "light-green": "hsl(var(--smart-light-green))",

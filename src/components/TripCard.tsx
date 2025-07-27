@@ -35,7 +35,7 @@ export const TripCard = memo(function TripCard({
         "flex flex-col md:flex-row md:items-center md:justify-between p-3 md:p-4 rounded-lg border transition-all space-y-2 md:space-y-0",
         "bg-gradient-card hover:shadow-md active:scale-[0.98] md:active:scale-100",
         "touch-manipulation", // Improve touch responsiveness
-        isNextTrip && "ring-2 ring-smart-green/50 bg-smart-green/5"
+        isNextTrip && "ring-2 ring-smart-train-green/50 bg-smart-train-green/5"
       )}
       role="listitem"
       aria-label={`Train ${
@@ -84,7 +84,7 @@ export const TripCard = memo(function TripCard({
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:flex md:items-center md:gap-4">
+      <div className="hidden md:flex md:items-center md:gap-4 md:flex-1">
         <TrainBadge
           tripNumber={trip.trip}
           isNextTrip={isNextTrip}
@@ -104,7 +104,9 @@ export const TripCard = memo(function TripCard({
             format={timeFormat}
           />
         </div>
-        {isNextTrip && <NextTrainBadge />}
+        <div className="flex items-center gap-2 ml-auto">
+          {isNextTrip && <NextTrainBadge />}
+        </div>
       </div>
 
       {showFerry && trip.ferry && (

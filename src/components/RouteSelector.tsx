@@ -83,11 +83,13 @@ export const RouteSelector = memo(function RouteSelector({
                     <SelectValue placeholder="Destination" />
                   </SelectTrigger>
                   <SelectContent role="listbox" aria-label="Available stations">
-                    {stations.map((station) => (
-                      <SelectItem key={station} value={station} role="option">
-                        {station}
-                      </SelectItem>
-                    ))}
+                    {stations
+                      .filter((station) => station !== fromStation)
+                      .map((station) => (
+                        <SelectItem key={station} value={station} role="option">
+                          {station}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
