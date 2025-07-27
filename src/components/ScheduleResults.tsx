@@ -41,7 +41,7 @@ export function ScheduleResults({
     : filteredTrips.slice(nextTripIndex >= 0 ? nextTripIndex : 0);
 
   return (
-    <Card className="border-0 shadow-none md:border md:shadow-sm rounded-none md:rounded-lg max-w-4xl mx-auto">
+    <Card className="border-0 shadow-none md:border md:shadow-sm max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle
           id="schedule-results-title"

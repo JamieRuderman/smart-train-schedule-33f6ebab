@@ -96,16 +96,16 @@ export function TrainScheduleApp() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white md:bg-background">
       {/* Header */}
       <header
-        className="container mx-auto px-4 py-6 flex flex-col items-center gap-3 bg-smart-train-green"
+        className="container mx-auto px-4 pt-4 pb-36 flex flex-col items-center bg-smart-train-green"
         role="banner"
       >
         <img
           src={smartLogo}
           alt="Sonoma-Marin Area Rail Transit Logo"
-          className="h-auto w-72 sm:w-96 max-w-full"
+          className="h-auto w-64 sm:w-96 max-w-full"
         />
         <h1 className="sr-only">SMART Train Schedule Application</h1>
       </header>

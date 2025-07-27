@@ -33,7 +33,7 @@ export const RouteSelector = memo(function RouteSelector({
   onSwapStations,
 }: RouteSelectorProps) {
   return (
-    <Card className="border-0 shadow-none md:border md:shadow-sm rounded-none md:rounded-lg max-w-4xl mx-auto">
+    <Card className="-mt-36 max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle
           id="route-planning-title"
