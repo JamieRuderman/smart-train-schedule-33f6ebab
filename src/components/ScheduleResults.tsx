@@ -1,3 +1,4 @@
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, AlertCircle } from "lucide-react";
 import { TripCard } from "./TripCard";
@@ -40,11 +41,11 @@ export function ScheduleResults({
     : filteredTrips.slice(nextTripIndex >= 0 ? nextTripIndex : 0);
 
   return (
-    <>
-      <div className="flex flex-col space-y-1.5 p-6">
-        <h3
+    <Card className="border-0 shadow-none md:border md:shadow-sm rounded-none md:rounded-lg max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle
           id="schedule-results-title"
-          className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2 mb-4"
+          className="flex items-center gap-2 mb-4"
         >
           {fromIndex < toIndex ? "Southbound" : "Northbound"} Schedule
           <div className="flex-grow flex justify-end items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
@@ -58,7 +59,7 @@ export function ScheduleResults({
               aria-hidden="true"
             />
           </div>
-        </h3>
+        </CardTitle>
         {nextTripIndex > 0 && !showAllTrips && (
           <Button
             variant="outline"
@@ -81,8 +82,8 @@ export function ScheduleResults({
             Hide earlier trains
           </Button>
         )}
-      </div>
-      <div className="p-6 pt-0">
+      </CardHeader>
+      <CardContent>
         {nextTripIndex === -1 && !showAllTrips && (
           <div
             className="mb-4 p-3 bg-smart-gold/10 border border-smart-gold/20 rounded-lg"
@@ -133,7 +134,7 @@ export function ScheduleResults({
             );
           })}
         </div>
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 }

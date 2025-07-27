@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import smartLogo from "@/assets/smart-logo.svg";
 import type { Station, FareType } from "@/types/smartSchedule";
 import { getFilteredTrips, getStationIndex } from "@/lib/scheduleUtils";
@@ -112,7 +111,7 @@ export function TrainScheduleApp() {
       </header>
 
       <main
-        className="container mx-auto px-4 py-4 md:py-6"
+        className="container mx-auto px-4 py-4 md:py-6 space-y-4"
         role="main"
         aria-label="Train schedule planning interface"
       >
@@ -126,6 +125,7 @@ export function TrainScheduleApp() {
           onScheduleTypeChange={handleScheduleTypeChange}
           onSwapStations={swapStations}
         />
+
         {/* Service Alerts */}
         <ServiceAlert
           showServiceAlert={showServiceAlert}
@@ -134,24 +134,25 @@ export function TrainScheduleApp() {
 
         {/* Schedule Results */}
         {filteredTrips.length > 0 && fromStation && toStation && (
-          <>
-            <Separator className="my-4" />
-            <ScheduleResults
-              filteredTrips={filteredTrips}
-              fromStation={fromStation}
-              toStation={toStation}
-              scheduleType={scheduleType}
-              fromIndex={fromIndex}
-              toIndex={toIndex}
-              currentTime={currentTime}
-              showAllTrips={showAllTrips}
-              onToggleShowAllTrips={toggleShowAllTrips}
-              timeFormat="12h"
-            />
-          </>
+          <ScheduleResults
+            filteredTrips={filteredTrips}
+            fromStation={fromStation}
+            toStation={toStation}
+            scheduleType={scheduleType}
+            fromIndex={fromIndex}
+            toIndex={toIndex}
+            currentTime={currentTime}
+            showAllTrips={showAllTrips}
+            onToggleShowAllTrips={toggleShowAllTrips}
+            timeFormat="12h"
+          />
         )}
         {fromStation && toStation && filteredTrips.length === 0 && (
-          <Card className="text-center py-8" role="status" aria-live="polite">
+          <Card
+            className="text-center py-8 max-w-4xl mx-auto"
+            role="status"
+            aria-live="polite"
+          >
             <CardContent>
               <p className="text-muted-foreground">
                 No trains found for this route.
@@ -162,15 +163,12 @@ export function TrainScheduleApp() {
 
         {/* Fare Section */}
         {fromStation && toStation && (
-          <>
-            <Separator className="my-4" />
-            <FareSection
-              fromStation={fromStation}
-              toStation={toStation}
-              selectedFareType={selectedFareType}
-              onFareTypeChange={handleFareTypeChange}
-            />
-          </>
+          <FareSection
+            fromStation={fromStation}
+            toStation={toStation}
+            selectedFareType={selectedFareType}
+            onFareTypeChange={handleFareTypeChange}
+          />
         )}
       </main>
     </div>

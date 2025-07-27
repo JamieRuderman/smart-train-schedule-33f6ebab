@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpDown, MapPin, Calendar, Target } from "lucide-react";
@@ -32,16 +33,16 @@ export const RouteSelector = memo(function RouteSelector({
   onSwapStations,
 }: RouteSelectorProps) {
   return (
-    <>
-      <div className="flex flex-col space-y-1.5 p-6">
-        <h3
+    <Card className="border-0 shadow-none md:border md:shadow-sm rounded-none md:rounded-lg max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle
           id="route-planning-title"
-          className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2"
+          className="flex items-center gap-2"
         >
           Plan Your Journey
-        </h3>
-      </div>
-      <div className="p-6 pt-0 space-y-4">
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
         {/* Compact Route Selection */}
         <div className="flex items-center gap-4">
           {/* Visual Indicators */}
@@ -135,7 +136,7 @@ export const RouteSelector = memo(function RouteSelector({
             </TabsTrigger>
           </TabsList>
         </Tabs>
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 });

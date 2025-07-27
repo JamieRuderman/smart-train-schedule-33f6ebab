@@ -1,3 +1,4 @@
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
 import { calculateFare, getAllFareOptions } from "@/lib/scheduleUtils";
 import { FareSelect } from "./FareSelect";
@@ -28,15 +29,15 @@ export function FareSection({
       : null;
 
   return (
-    <>
-      <div className="flex flex-col space-y-1.5 p-6">
-        <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+    <Card className="border-0 shadow-none md:border md:shadow-sm rounded-none md:rounded-lg max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
           <DollarSign className="h-6 w-6 text-primary" />
           Fare Information
-        </h3>
-      </div>
+        </CardTitle>
+      </CardHeader>
 
-      <div className="p-6 pt-0 space-y-4">
+      <CardContent className="space-y-4">
         <div className="flex items-start gap-4">
           <div className="flex-1 space-y-4">
             {/* Fare Type Selector */}
@@ -115,7 +116,7 @@ export function FareSection({
             </div>
           </div>
         </div>
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 }
