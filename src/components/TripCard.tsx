@@ -47,30 +47,30 @@ export const TripCard = memo(function TripCard({
     >
       {/* Mobile Layout */}
       <div className="flex flex-col space-y-2 md:hidden">
-        {/* Train # and Next Train badge */}
+        {/* Train #, Times, and Next Train badge on same line */}
         <div className="flex items-center justify-between">
-          <TrainBadge
-            tripNumber={trip.trip}
-            isNextTrip={isNextTrip}
-            isPastTrip={isPastTrip}
-            showAllTrips={showAllTrips}
-          />
+          <div className="flex items-center gap-3">
+            <TrainBadge
+              tripNumber={trip.trip}
+              isNextTrip={isNextTrip}
+              isPastTrip={isPastTrip}
+              showAllTrips={showAllTrips}
+            />
+            <div className="flex items-center gap-2 text-sm">
+              <TimeDisplay
+                time={trip.times[fromIndex]}
+                isNextTrip={isNextTrip}
+                format={timeFormat}
+              />
+              <span className="text-muted-foreground">→</span>
+              <TimeDisplay
+                time={trip.times[toIndex]}
+                isNextTrip={isNextTrip}
+                format={timeFormat}
+              />
+            </div>
+          </div>
           {isNextTrip && <NextTrainBadge />}
-        </div>
-
-        {/* Times */}
-        <div className="flex items-center gap-2 text-sm">
-          <TimeDisplay
-            time={trip.times[fromIndex]}
-            isNextTrip={isNextTrip}
-            format={timeFormat}
-          />
-          <span className="text-muted-foreground">→</span>
-          <TimeDisplay
-            time={trip.times[toIndex]}
-            isNextTrip={isNextTrip}
-            format={timeFormat}
-          />
         </div>
 
         {/* Ferry info - only if ferry exists */}

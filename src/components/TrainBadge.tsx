@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { TrainFront } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TrainBadgeProps {
@@ -15,23 +15,25 @@ export function TrainBadge({
   showAllTrips = false,
 }: TrainBadgeProps) {
   return (
-    <Badge
-      variant="outline"
+    <div
       className={cn(
-        "font-mono",
-        isNextTrip && "border-smart-train-green text-smart-train-green",
-        isPastTrip && showAllTrips && "border-muted-foreground/30"
+        "flex items-center gap-1.5 w-16",
+        isNextTrip && "text-smart-train-green",
+        isPastTrip && showAllTrips && "text-muted-foreground/60"
       )}
     >
-      Train {tripNumber.toString()}
-    </Badge>
+      <TrainFront className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+      <span className="text-2xl font-semibold min-w-[1.5rem]">
+        {tripNumber}
+      </span>
+    </div>
   );
 }
 
 export function NextTrainBadge() {
   return (
-    <Badge variant="secondary" className="text-xs bg-primary text-white">
+    <div className="text-xs bg-primary text-white px-2 py-1 rounded-md font-medium">
       Next Train
-    </Badge>
+    </div>
   );
-} 
+}
