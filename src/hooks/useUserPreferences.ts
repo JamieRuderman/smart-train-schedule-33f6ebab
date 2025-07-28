@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import type { Station } from "@/types/smartSchedule";
+import type { Station, FareType } from "@/types/smartSchedule";
 
 export interface UserPreferences {
   lastSelectedStations: {
     from: Station | "";
     to: Station | "";
   };
+  selectedFareType: FareType | "none";
 }
 
 const DEFAULT_PREFERENCES: UserPreferences = {
@@ -13,6 +14,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
     from: "",
     to: "",
   },
+  selectedFareType: "none",
 };
 
 const STORAGE_KEY = "smart-train-preferences";
@@ -64,9 +66,20 @@ export function useUserPreferences() {
     [savePreferences]
   );
 
+  // Update selected fare type
+  const updateSelectedFareType = useCallback(
+    (fareType: FareType | "none") => {
+      savePreferences({
+        selectedFareType: fareType,
+      });
+    },
+    [savePreferences]
+  );
+
   return {
     preferences,
     isLoaded,
     updateLastSelected,
+    updateSelectedFareType,
   };
 }

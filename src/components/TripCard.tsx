@@ -34,7 +34,7 @@ export const TripCard = memo(function TripCard({
   return (
     <div
       className={cn(
-        "flex items-center px-6 py-2 rounded-lg border transition-all ",
+        "flex items-center px-4 py-2 rounded-lg border transition-all ",
         "bg-gradient-card",
         "touch-manipulation", // Improve touch responsiveness
         isNextTrip && "ring-2 ring-smart-train-green/50 bg-smart-train-green/5"

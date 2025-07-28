@@ -28,9 +28,6 @@ export function TrainScheduleApp() {
     new Date("2025-07-27T10:00:00")
   );
   const [showServiceAlert, setShowServiceAlert] = useState(false);
-  const [selectedFareType, setSelectedFareType] = useState<FareType | "none">(
-    "none"
-  );
 
   // Initialize state from user preferences once loaded
   useEffect(() => {
@@ -91,10 +88,6 @@ export function TrainScheduleApp() {
 
   const toggleServiceAlert = () => {
     setShowServiceAlert(!showServiceAlert);
-  };
-
-  const handleFareTypeChange = (fareType: FareType | "none") => {
-    setSelectedFareType(fareType);
   };
 
   return (
@@ -165,12 +158,7 @@ export function TrainScheduleApp() {
 
         {/* Fare Section */}
         {fromStation && toStation && (
-          <FareSection
-            fromStation={fromStation}
-            toStation={toStation}
-            selectedFareType={selectedFareType}
-            onFareTypeChange={handleFareTypeChange}
-          />
+          <FareSection fromStation={fromStation} toStation={toStation} />
         )}
       </main>
     </div>
