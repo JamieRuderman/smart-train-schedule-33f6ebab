@@ -24,7 +24,9 @@ export function TrainScheduleApp() {
     isWeekend() ? "weekend" : "weekday"
   );
   const [showAllTrips, setShowAllTrips] = useState<boolean>(false);
-  const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [currentTime, setCurrentTime] = useState<Date>(
+    new Date("2025-07-27T10:00:00")
+  );
   const [showServiceAlert, setShowServiceAlert] = useState(false);
   const [selectedFareType, setSelectedFareType] = useState<FareType | "none">(
     "none"

@@ -15,21 +15,21 @@ export function FerryConnection({
 }: FerryConnectionProps) {
   if (isMobile) {
     return (
-      <div className="flex items-center justify-between">
-        <Badge className="text-xs text-white">Ferry Connection</Badge>
-        <p className="text-xs text-muted-foreground">
+      <div className="flex-grow text-left w-full">
+        <Badge className="text-xs text-white">Ferry</Badge>
+        <span className="text-xs text-muted-foreground ml-2">
           Departs <TimeDisplay time={ferry.depart} format={timeFormat} />
-        </p>
+        </span>
       </div>
     );
   }
 
   return (
-    <div className="text-right">
-      <span className="text-xs text-muted-foreground mr-4">
+    <div className="flex-grow text-right">
+      <span className="text-xs text-muted-foreground mr-2">
         Departs <TimeDisplay time={ferry.depart} format={timeFormat} />
       </span>
-      <Badge className="text-xs text-white">Ferry Connection</Badge>
+      <Badge className="text-xs text-white">Ferry</Badge>
     </div>
   );
 }
