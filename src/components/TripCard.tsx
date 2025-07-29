@@ -56,7 +56,7 @@ export const TripCard = memo(function TripCard({
       {isMobile ? (
         <div className="flex flex-col items-center ml-4 w-full">
           <div className="flex flex-row gap-2 w-full items-center">
-            <div className="flex flex-row gap-2 items-center text-sm">
+            <div className="flex flex-row gap-2 items-center text-sm whitespace-nowrap">
               <TimeDisplay
                 time={trip.times[fromIndex]}
                 isNextTrip={isNextTrip}

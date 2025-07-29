@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, X } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { calculateFare, getAllFareOptions } from "@/lib/scheduleUtils";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import type { Station, FareType } from "@/types/smartSchedule";
@@ -35,14 +35,18 @@ export function FareSection({ fromStation, toStation }: FareSectionProps) {
 
   return (
     <Card className="border-0 shadow-none md:border md:shadow-sm max-w-4xl mx-auto">
-      <CardHeader className="p-3 md:p-6">
-        <CardTitle className="flex items-center gap-2">
+      <CardHeader className="p-3 md:p-6 pb-0 md:pb-0">
+        <CardTitle className="flex items-center justify-between gap-2">
           Fare Information
-          <DollarSign className="h-6 w-6 text-primary" />
+          {selectedFareType === "none" && (
+            <h4 className="text-sm font-medium text-muted-foreground">
+              Select your fare
+            </h4>
+          )}
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-4 p-3 md:p-6">
+      <CardContent className="space-y-2 p-3 md:p-6">
         {/* Selected Fare Display */}
         {selectedFareType !== "none" && currentFare ? (
           <div className="space-y-4">
@@ -78,42 +82,41 @@ export function FareSection({ fromStation, toStation }: FareSectionProps) {
           </div>
         ) : (
           /* All Fare Options - Clickable Cards */
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-muted-foreground">
-                Select your fare type:
-              </h4>
-              <div className="grid gap-2">
-                {fareOptions.map((option) => (
-                  <Button
-                    key={option.fareType}
-                    variant="outline"
-                    onClick={() => handleFareSelect(option.fareType)}
-                    className="flex justify-between items-center p-4 h-auto rounded-lg border border-border hover:border-primary hover:bg-primary/10 hover:shadow-sm transition-all duration-200 text-left w-full group"
-                  >
-                    <span className="text-sm font-medium group-hover:text-primary transition-colors">
-                      {option.description}
-                    </span>
-                    <span className="font-semibold text-lg group-hover:text-primary transition-colors">
-                      {option.price === 0
-                        ? "Free"
-                        : `$${option.price.toFixed(2)}`}
-                    </span>
-                  </Button>
-                ))}
-              </div>
-            </div>
+          <div className="grid gap-2">
+            {fareOptions.map((option) => (
+              <Button
+                key={option.fareType}
+                variant="outline"
+                onClick={() => handleFareSelect(option.fareType)}
+                className="flex justify-between items-center p-4 h-auto rounded-lg border border-border hover:border-primary hover:bg-primary/10 hover:shadow-sm transition-all duration-200 text-left w-full group"
+              >
+                <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                  {option.description}
+                </span>
+                <span className="font-semibold text-lg group-hover:text-primary transition-colors">
+                  {option.price === 0 ? "Free" : `$${option.price.toFixed(2)}`}
+                </span>
+              </Button>
+            ))}
           </div>
         )}
 
         {/* Additional Info */}
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-muted-foreground py-2">
           <p>• Fares are zone-based ($1.50 per zone for adults)</p>
           <p>• Youth (0-18) and seniors (65+) ride free</p>
+          <p>• Discounts for disabled / Medicare and low-income riders</p>
           <p>
-            • Discounts available for disabled/Medicare and low-income riders
+            • For payment options and passes, visit{" "}
+            <a
+              href="https://sonomamarintrain.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-primary transition-colors"
+            >
+              sonomamarintrain.org
+            </a>
           </p>
-          <p>• For payment options and passes, visit sonomamarintrain.org</p>
         </div>
       </CardContent>
     </Card>

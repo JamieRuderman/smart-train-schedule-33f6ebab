@@ -24,9 +24,7 @@ export function TrainScheduleApp() {
     isWeekend() ? "weekend" : "weekday"
   );
   const [showAllTrips, setShowAllTrips] = useState<boolean>(false);
-  const [currentTime, setCurrentTime] = useState<Date>(
-    new Date("2025-07-27T10:00:00")
-  );
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [showServiceAlert, setShowServiceAlert] = useState(false);
 
   // Initialize state from user preferences once loaded
@@ -94,7 +92,7 @@ export function TrainScheduleApp() {
     <div className="min-h-screen bg-white md:bg-background">
       {/* Header */}
       <header
-        className="container mx-auto px-4 pt-4 pb-36 flex flex-col items-center bg-smart-train-green"
+        className="container mx-auto px-4 pt-4 pb-36 flex flex-col items-center bg-smart-train-green rounded-b-2xl"
         role="banner"
       >
         <img

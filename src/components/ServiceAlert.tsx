@@ -42,11 +42,11 @@ export function ServiceAlert({
   }
 
   return (
-    <div className="max-w-4xl mx-auto flex justify-center">
+    <div className="max-w-4xl mx-auto flex justify-center w-full">
       <Button
         variant="outline"
         size="sm"
-        className="justify-start font-medium gap-2 border border-smart-gold ring-2 ring-smart-gold/50 bg-smart-gold/5 text-smart-gold hover:bg-smart-gold/10 hover:text-smart-gold hover:border-smart-gold hover:ring-smart-gold/50"
+        className="w-full justify-start font-medium gap-2 border border-smart-gold ring-2 ring-smart-gold/50 bg-smart-gold/5 text-smart-gold hover:bg-smart-gold/10 hover:text-smart-gold hover:border-smart-gold hover:ring-smart-gold/50"
         onClick={onToggleServiceAlert}
       >
         <AlertCircle className="h-6 w-6 text-smart-gold" />
