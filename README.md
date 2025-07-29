@@ -12,6 +12,7 @@ A modern, responsive web application for viewing Sonoma-Marin Area Rail Transit 
 - **Accessibility**: Built with screen readers and keyboard navigation in mind
 - **Weekend/Weekday Schedules**: Toggle between different schedule types
 - **Next Train Highlighting**: Easily identify the next available train
+- **Dark Mode Support**: Automatic theme switching based on system preference with manual override
 
 ## 🛠️ Technology Stack
 
@@ -65,12 +66,18 @@ The built files will be in the `dist` directory.
 3. **View Results**: See all available trains with departure and arrival times
 4. **Ferry Connections**: When traveling to Larkspur, ferry connection information is automatically displayed
 5. **Service Alerts**: Check for any service disruptions or schedule changes
+6. **Theme Toggle**: Switch between light, dark, and system themes using the theme toggle at the bottom of the page
 
 ## 🎨 Design System
 
 The application uses SMART's official brand colors:
 - **SMART Green**: `#114533` - Primary brand color
 - **SMART Gold**: `#E48E25` - Secondary accent color
+
+The application supports both light and dark themes:
+- **Light Theme**: Clean, bright interface optimized for daytime use
+- **Dark Theme**: Easy on the eyes for nighttime viewing
+- **System Theme**: Automatically matches your device's theme preference
 
 The design follows modern web standards with:
 - Consistent spacing and typography

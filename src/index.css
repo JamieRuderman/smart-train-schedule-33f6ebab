@@ -26,7 +26,7 @@ All colors MUST be HSL.
     --muted: 0 0% 95%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: var(--smart-light-gold); /* smart-green with 50% opacity */
+    --accent: hsl(var(--smart-gold) / 0.1); /* 10% opacity for visible hover */
     --accent-foreground: var(--foreground);
 
     --destructive: 0 84.2% 60.2%;
@@ -42,7 +42,7 @@ All colors MUST be HSL.
     --smart-green: 143 72% 14%; /* #114533 from logo - kept for logo only */
     --smart-train-green: 157 82% 37%; /* #11ab75 - real train green for UI */
     --smart-gold: 27 85% 53%; /* #E48E25 from logo */
-    --smart-light-gold: hsl(var(--smart-gold) / 0.05); /* Transparent version of SMART gold */
+    /* Removed --smart-light-gold - now using direct HSL values for accent */
     --smart-dark-green: 143 72% 10%; /* Darker green for depth */
     --smart-light-green: 143 72% 20%; /* Lighter green for accents */
 
@@ -101,7 +101,7 @@ All colors MUST be HSL.
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
 
-    --accent: var(--smart-light-gold); /* lighter smart-green with 60% opacity for dark mode */
+    --accent: hsl(var(--smart-gold) / 0.2); /* 20% opacity for visible hover in dark mode */
     --accent-foreground: var(--foreground);
 
     --destructive: 0 62.8% 30.6%;
@@ -115,7 +115,7 @@ All colors MUST be HSL.
     --smart-green: 143 72% 20%; /* Lighter for dark mode - kept for logo only */
     --smart-train-green: 157 82% 47%; /* Lighter train green for dark mode */
     --smart-gold: 27 85% 60%; /* Brighter for dark mode */
-    --smart-light-gold: 27 85% 83%; /* #ffdfb7 from logo */
+    /* Removed --smart-light-gold - now using direct HSL values for accent */
     --smart-dark-green: 143 72% 15%;
     --smart-light-green: 143 72% 25%;
 

@@ -8,6 +8,7 @@ import { RouteSelector } from "./RouteSelector";
 import { ServiceAlert } from "./ServiceAlert";
 import { ScheduleResults } from "./ScheduleResults";
 import { FareSection } from "./FareSection";
+import { ThemeToggle } from "./ThemeToggle";
 
 // Helper function to determine if today is a weekend
 const isWeekend = (): boolean => {
@@ -159,6 +160,11 @@ export function TrainScheduleApp() {
           <FareSection fromStation={fromStation} toStation={toStation} />
         )}
       </main>
+
+      {/* Theme Toggle at Bottom */}
+      <div className="container max-w-4xl mx-auto p-0 pb-8 flex">
+        <ThemeToggle />
+      </div>
     </div>
   );
 }
