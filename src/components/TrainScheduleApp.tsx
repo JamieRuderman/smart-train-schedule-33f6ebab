@@ -90,7 +90,7 @@ export function TrainScheduleApp() {
   };
 
   return (
-    <div className="min-h-screen bg-white md:bg-background">
+    <div className="min-h-screen bg-card md:bg-background">
       {/* Header */}
       <header
         className="container mx-auto px-4 pt-4 pb-36 flex flex-col items-center bg-smart-train-green rounded-b-2xl"
@@ -162,7 +162,7 @@ export function TrainScheduleApp() {
       </main>
 
       {/* Theme Toggle at Bottom */}
-      <div className="container max-w-4xl mx-auto p-0 pb-8 flex">
+      <div className="container max-w-4xl mx-auto px-8 md:px-0 pb-8">
         <ThemeToggle />
       </div>
     </div>

@@ -45,7 +45,7 @@ export function ScheduleResults({
       <CardHeader className="p-3 md:p-6">
         <CardTitle
           id="schedule-results-title"
-          className="flex items-center gap-2 mb-4"
+          className="flex items-center gap-2"
         >
           {fromIndex < toIndex ? "Southbound" : "Northbound"} Schedule
           <div className="flex-grow flex justify-end items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
@@ -64,6 +64,7 @@ export function ScheduleResults({
           <Button
             variant="outline"
             size="sm"
+            className="!mt-6"
             onClick={onToggleShowAllTrips}
             aria-label="Show earlier trains"
           >
@@ -74,15 +75,15 @@ export function ScheduleResults({
           <Button
             variant="outline"
             size="sm"
+            className="!mt-6"
             onClick={onToggleShowAllTrips}
-            className="mt-2"
             aria-label="Hide earlier trains that have already departed"
           >
             Hide earlier trains
           </Button>
         )}
       </CardHeader>
-      <CardContent className="p-3 md:p-6">
+      <CardContent className="p-3 md:p-6 md:pt-0">
         {nextTripIndex === -1 && !showAllTrips && (
           <div
             className="mb-3 -mt-4 p-3 bg-smart-gold/10 border border-smart-gold/20 rounded-lg"
