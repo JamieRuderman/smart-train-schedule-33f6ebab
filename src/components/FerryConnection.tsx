@@ -82,7 +82,7 @@ export function FerryConnection({
   return (
     <div className="flex-grow flex items-center justify-end gap-3">
       <div className="flex flex-col items-end gap-1">
-        <div className="flex items-center text-sm text-smart-train-green">
+        <div className="flex items-center text-sm text-muted-foreground">
           <TimeDisplay time={ferry.depart} format={timeFormat} />
           <span className="opacity-60">→</span>
           <TimeDisplay
@@ -107,8 +107,8 @@ export function FerryConnection({
           {transferTime} min transfer
         </div>
       </div>
-      <div className="flex flex-col justify-center items-center px-1 ml-1 gap-1 text-smart-train-green">
-        <Ship className="h-5 w-5 ml-1" />
+      <div className="flex flex-col justify-center items-center pl-4 ml-1 gap-1 border-l ">
+        <Ship className="h-5 w-5" />
         <span className="text-[10px] uppercase">Ferry</span>
       </div>
     </div>
