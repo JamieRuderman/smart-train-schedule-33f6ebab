@@ -1,8 +1,9 @@
 import { memo } from "react";
+import type React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUpDown, MapPin, Calendar, Circle } from "lucide-react";
+import { ArrowUpDown, MapPin, Calendar, Circle, Ship } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -22,6 +23,42 @@ interface RouteSelectorProps {
   onScheduleTypeChange: (type: "weekday" | "weekend") => void;
   onSwapStations: () => void;
 }
+
+// Utility function to check if station has ferry connection
+const hasFerryConnection = (station: string): boolean => station === "Larkspur";
+
+// Reusable component for displaying station name with ferry icon
+const StationWithFerry = ({ station }: { station: string }) => (
+  <div className="flex items-center gap-2">
+    <span>{station}</span>
+    {hasFerryConnection(station) && (
+      <>
+        <span className="text-muted-foreground">→</span>
+        <Ship className="h-4 w-4 ml-1" />
+      </>
+    )}
+  </div>
+);
+
+// Custom SelectItem that handles ferry stations properly
+const StationSelectItem = ({
+  station,
+  ...props
+}: {
+  station: string;
+} & React.ComponentProps<typeof SelectItem>) => (
+  <SelectItem {...props}>
+    <div className="flex items-center justify-between w-full">
+      <span>{station}</span>
+      {hasFerryConnection(station) && (
+        <>
+          <span className="text-muted-foreground ml-2">→</span>
+          <Ship className="h-4 w-4 ml-2" />
+        </>
+      )}
+    </div>
+  </SelectItem>
+);
 
 export const RouteSelector = memo(function RouteSelector({
   fromStation,
@@ -64,13 +101,20 @@ export const RouteSelector = memo(function RouteSelector({
                     className="h-11"
                     aria-label="Select departure station"
                   >
-                    <SelectValue placeholder="Your location" />
+                    {fromStation ? (
+                      <StationWithFerry station={fromStation} />
+                    ) : (
+                      <SelectValue placeholder="Your location" />
+                    )}
                   </SelectTrigger>
                   <SelectContent role="listbox" aria-label="Available stations">
                     {stations.map((station) => (
-                      <SelectItem key={station} value={station} role="option">
-                        {station}
-                      </SelectItem>
+                      <StationSelectItem
+                        key={station}
+                        station={station}
+                        value={station}
+                        role="option"
+                      />
                     ))}
                   </SelectContent>
                 </Select>
@@ -84,15 +128,22 @@ export const RouteSelector = memo(function RouteSelector({
                     className="h-11"
                     aria-label="Select arrival station"
                   >
-                    <SelectValue placeholder="Destination" />
+                    {toStation ? (
+                      <StationWithFerry station={toStation} />
+                    ) : (
+                      <SelectValue placeholder="Destination" />
+                    )}
                   </SelectTrigger>
                   <SelectContent role="listbox" aria-label="Available stations">
                     {stations
                       .filter((station) => station !== fromStation)
                       .map((station) => (
-                        <SelectItem key={station} value={station} role="option">
-                          {station}
-                        </SelectItem>
+                        <StationSelectItem
+                          key={station}
+                          station={station}
+                          value={station}
+                          role="option"
+                        />
                       ))}
                   </SelectContent>
                 </Select>
