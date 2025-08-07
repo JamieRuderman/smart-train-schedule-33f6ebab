@@ -93,7 +93,7 @@ export function TrainScheduleApp() {
     <div className="min-h-screen bg-card md:bg-background">
       {/* Header */}
       <header
-        className="container mx-auto px-4 pt-4 pb-36 flex flex-col items-center bg-smart-train-green rounded-b-2xl"
+        className="container mx-auto px-4 pt-4 pb-36 flex flex-col items-center bg-smart-train-green xl:rounded-b-2xl"
         role="banner"
       >
         <img

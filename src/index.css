@@ -7,7 +7,7 @@ All colors MUST be HSL.
 */
 
 @layer base {
-:root {
+  :root {
     --background: 0 0% 99%;
     --foreground: 220 13% 18%;
 
@@ -54,7 +54,11 @@ All colors MUST be HSL.
     --delay: 15 86% 55%;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-gold)), hsl(var(--smart-train-green)));
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(var(--smart-gold)),
+      hsl(var(--smart-train-green))
+    );
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(120 15% 98%));
 
     /* Shadows */
@@ -101,7 +105,9 @@ All colors MUST be HSL.
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
 
-    --accent: hsl(var(--smart-gold) / 0.2); /* 20% opacity for visible hover in dark mode */
+    --accent: hsl(
+      var(--smart-gold) / 0.2
+    ); /* 20% opacity for visible hover in dark mode */
     --accent-foreground: var(--foreground);
 
     --destructive: 0 62.8% 30.6%;
@@ -121,8 +127,16 @@ All colors MUST be HSL.
     --delay: 15 86% 65%;
 
     /* Dark gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--smart-gold)), hsl(var(--smart-train-green)));
-    --gradient-card: linear-gradient(145deg, hsl(220 13% 11%), hsl(120 13% 13%));
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(var(--smart-gold)),
+      hsl(var(--smart-train-green))
+    );
+    --gradient-card: linear-gradient(
+      145deg,
+      hsl(220 13% 11%),
+      hsl(120 13% 13%)
+    );
 
     /* Dark shadows */
     --shadow-card: 0 4px 12px -4px hsl(0 0% 0% / 0.3);
@@ -149,7 +163,12 @@ All colors MUST be HSL.
   }
 
   /* Eliminate 300ms click delay on mobile devices */
-  button, input, select, textarea, [role="button"], [tabindex] {
+  button,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  [tabindex] {
     touch-action: manipulation;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -159,10 +178,23 @@ All colors MUST be HSL.
   }
 
   /* Allow text selection for inputs and textareas */
-  input, textarea {
+  input,
+  textarea {
     -webkit-user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
   }
+}
+
+/* Custom dialog and drawer overlay styling for lighter background with blur */
+.fixed.inset-0.z-50 {
+  background-color: hsl(var(--background) / 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Ensure it looks good in both light and dark modes */
+.dark .fixed.inset-0.z-50 {
+  background-color: hsl(var(--background) / 0.5) !important;
 }
