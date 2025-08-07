@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUpDown, MapPin, Calendar, Target } from "lucide-react";
+import { ArrowUpDown, MapPin, Calendar, Circle } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -47,9 +47,12 @@ export const RouteSelector = memo(function RouteSelector({
         <div className="flex items-center gap-4">
           {/* Visual Indicators */}
           <div className="flex flex-col items-center">
-            <MapPin className="h-5 w-5 text-primary fill-primary" />
+            <MapPin className="h-5 w-5 text-primary fill" />
             <div className="w-px h-6 border-l border-dotted border-muted-foreground my-2"></div>
-            <Target className="h-5 w-5 text-primary" />
+            <Circle
+              className="h-3 w-3 text-primary"
+              style={{ strokeWidth: 3 }}
+            />
           </div>
 
           {/* Station Selectors */}

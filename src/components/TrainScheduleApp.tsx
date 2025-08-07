@@ -26,7 +26,7 @@ export function TrainScheduleApp() {
   );
   const [showAllTrips, setShowAllTrips] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  const [showServiceAlert, setShowServiceAlert] = useState(false);
+  const [showServiceAlert, setShowServiceAlert] = useState(true);
 
   // Initialize state from user preferences once loaded
   useEffect(() => {

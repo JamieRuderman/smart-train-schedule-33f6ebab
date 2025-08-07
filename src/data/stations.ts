@@ -1,22 +1,5 @@
 import type { Station, StationZone } from "@/types/smartSchedule";
 
-const stations: Station[] = [
-  "Windsor",
-  "Sonoma County Airport",
-  "Santa Rosa North",
-  "Santa Rosa Downtown",
-  "Rohnert Park",
-  "Cotati",
-  "Petaluma North",
-  "Petaluma Downtown",
-  "Novato San Marin",
-  "Novato Downtown",
-  "Novato Hamilton",
-  "Marin Civic Center",
-  "San Rafael",
-  "Larkspur",
-];
-
 // Zone mapping based on SMART train route
 export const stationZones: StationZone[] = [
   { station: "Windsor", zone: 1 },
@@ -25,15 +8,18 @@ export const stationZones: StationZone[] = [
   { station: "Santa Rosa Downtown", zone: 2 },
   { station: "Rohnert Park", zone: 3 },
   { station: "Cotati", zone: 3 },
-  { station: "Petaluma North", zone: 4 },
-  { station: "Petaluma Downtown", zone: 4 },
-  { station: "Novato San Marin", zone: 5 },
-  { station: "Novato Downtown", zone: 5 },
-  { station: "Novato Hamilton", zone: 5 },
-  { station: "Marin Civic Center", zone: 6 },
-  { station: "San Rafael", zone: 6 },
-  { station: "Larkspur", zone: 6 },
+  { station: "Petaluma North", zone: 3 },
+  { station: "Petaluma Downtown", zone: 3 },
+  { station: "Novato San Marin", zone: 4 },
+  { station: "Novato Downtown", zone: 4 },
+  { station: "Novato Hamilton", zone: 4 },
+  { station: "Marin Civic Center", zone: 5 },
+  { station: "San Rafael", zone: 5 },
+  { station: "Larkspur", zone: 5 },
 ];
+
+// Derive stations from stationZones to avoid duplication
+const stations: Station[] = stationZones.map(({ station }) => station);
 
 // Quick lookup for station zones
 export const stationZoneMap: Record<Station, number> = stationZones.reduce(
