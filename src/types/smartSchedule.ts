@@ -55,7 +55,6 @@ export type TupleOf<
 export interface TrainTrip {
   trip: number;
   times: TupleOf<string, typeof STATION_COUNT>;
-  ferry?: FerryConnection;
 }
 
 export interface TrainSchedule {

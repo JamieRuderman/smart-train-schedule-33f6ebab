@@ -187,7 +187,7 @@ All colors MUST be HSL.
   }
 }
 
-/* Custom dialog and drawer overlay styling for lighter background with blur */
+/* Custom dialog overlay styling for lighter background with blur */
 .fixed.inset-0.z-50 {
   background-color: hsl(var(--background) / 0.4) !important;
   backdrop-filter: blur(8px) !important;

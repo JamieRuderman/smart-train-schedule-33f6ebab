@@ -28,12 +28,20 @@ interface RouteSelectorProps {
 const hasFerryConnection = (station: string): boolean => station === "Larkspur";
 
 // Reusable component for displaying station name with ferry icon
-const StationWithFerry = ({ station }: { station: string }) => (
+const StationWithFerry = ({
+  station,
+  direction,
+}: {
+  station: string;
+  direction: "southbound" | "northbound";
+}) => (
   <div className="flex items-center gap-2">
     <span>{station}</span>
     {hasFerryConnection(station) && (
       <>
-        <span className="text-muted-foreground">→</span>
+        <span className="text-muted-foreground">
+          {direction === "southbound" ? "←" : "→"}
+        </span>
         <Ship className="h-4 w-4 ml-1" />
       </>
     )}
@@ -43,16 +51,20 @@ const StationWithFerry = ({ station }: { station: string }) => (
 // Custom SelectItem that handles ferry stations properly
 const StationSelectItem = ({
   station,
+  direction,
   ...props
 }: {
   station: string;
+  direction: "southbound" | "northbound";
 } & React.ComponentProps<typeof SelectItem>) => (
   <SelectItem {...props}>
     <div className="flex items-center justify-between w-full">
       <span>{station}</span>
       {hasFerryConnection(station) && (
         <>
-          <span className="text-muted-foreground ml-2">→</span>
+          <span className="text-muted-foreground ml-2">
+            {direction === "southbound" ? "←" : "→"}
+          </span>
           <Ship className="h-4 w-4 ml-2" />
         </>
       )}
@@ -102,7 +114,10 @@ export const RouteSelector = memo(function RouteSelector({
                     aria-label="Select departure station"
                   >
                     {fromStation ? (
-                      <StationWithFerry station={fromStation} />
+                      <StationWithFerry
+                        station={fromStation}
+                        direction="southbound"
+                      />
                     ) : (
                       <SelectValue placeholder="Your location" />
                     )}
@@ -114,6 +129,7 @@ export const RouteSelector = memo(function RouteSelector({
                         station={station}
                         value={station}
                         role="option"
+                        direction="southbound"
                       />
                     ))}
                   </SelectContent>
@@ -129,7 +145,10 @@ export const RouteSelector = memo(function RouteSelector({
                     aria-label="Select arrival station"
                   >
                     {toStation ? (
-                      <StationWithFerry station={toStation} />
+                      <StationWithFerry
+                        station={toStation}
+                        direction="northbound"
+                      />
                     ) : (
                       <SelectValue placeholder="Destination" />
                     )}
@@ -143,6 +162,7 @@ export const RouteSelector = memo(function RouteSelector({
                           station={station}
                           value={station}
                           role="option"
+                          direction="northbound"
                         />
                       ))}
                   </SelectContent>
