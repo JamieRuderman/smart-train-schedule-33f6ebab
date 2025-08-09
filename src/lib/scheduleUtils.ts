@@ -1,6 +1,7 @@
 import stations, { stationZoneMap } from "@/data/stations";
 import weekdaySchedule from "@/data/weekdaySchedule";
 import weekendSchedule from "@/data/weekendSchedule";
+import { weekdayFerries, weekendFerries } from "@/data/ferrySchedule";
 import type {
   Station,
   TrainTrip,
@@ -63,6 +64,25 @@ stations.forEach((fromStation, fromIndex) => {
 function processScheduleData(): ScheduleCache {
   const cache: ScheduleCache = {};
 
+  const parseTimeToMinutes = (timeStr: string): number => {
+    const cleaned = timeStr.replace(/[*~]/g, "");
+    const [h, m] = cleaned.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const findNextFerry = (
+    arrivalTime: string,
+    ferries: FerryConnection[]
+  ): FerryConnection | undefined => {
+    const arrivalMinutes = parseTimeToMinutes(arrivalTime);
+    for (const ferry of ferries) {
+      if (parseTimeToMinutes(ferry.depart) >= arrivalMinutes) {
+        return ferry;
+      }
+    }
+    return undefined;
+  };
+
   // Process weekday schedule
   (Object.entries(weekdaySchedule) as [string, TrainTrip[]][]).forEach(
     ([direction, trips]) => {
@@ -91,7 +111,13 @@ function processScheduleData(): ScheduleCache {
                   cache[key].push({
                     trip: trip.trip,
                     times: trip.times,
-                    ferry: trip.ferry,
+                    ferry:
+                      toStation === "Larkspur"
+                        ? findNextFerry(
+                            trip.times[stationIndexMap["Larkspur"]],
+                            weekdayFerries
+                          )
+                        : undefined,
                     departureTime,
                     arrivalTime,
                     fromStation,
@@ -135,7 +161,13 @@ function processScheduleData(): ScheduleCache {
                   cache[key].push({
                     trip: trip.trip,
                     times: trip.times,
-                    ferry: trip.ferry,
+                    ferry:
+                      toStation === "Larkspur"
+                        ? findNextFerry(
+                            trip.times[stationIndexMap["Larkspur"]],
+                            weekendFerries
+                          )
+                        : undefined,
                     departureTime,
                     arrivalTime,
                     fromStation,
