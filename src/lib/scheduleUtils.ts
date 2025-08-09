@@ -1,6 +1,5 @@
 import stations, { stationZoneMap } from "@/data/stations";
-import weekdaySchedule from "@/data/weekdaySchedule";
-import weekendSchedule from "@/data/weekendSchedule";
+import trainSchedules, { type ScheduleType } from "@/data/trainSchedules";
 import { weekdayFerries, weekendFerries } from "@/data/ferrySchedule";
 import type {
   Station,
@@ -84,7 +83,7 @@ function processScheduleData(): ScheduleCache {
   };
 
   // Process weekday schedule
-  (Object.entries(weekdaySchedule) as [string, TrainTrip[]][]).forEach(
+  (Object.entries(trainSchedules.weekday) as [string, TrainTrip[]][]).forEach(
     ([direction, trips]) => {
       trips.forEach((trip) => {
         // Pre-calculate validity for all possible station combinations
@@ -134,7 +133,7 @@ function processScheduleData(): ScheduleCache {
   );
 
   // Process weekend schedule
-  (Object.entries(weekendSchedule) as [string, TrainTrip[]][]).forEach(
+  (Object.entries(trainSchedules.weekend) as [string, TrainTrip[]][]).forEach(
     ([direction, trips]) => {
       trips.forEach((trip) => {
         // Pre-calculate validity for all possible station combinations
@@ -197,7 +196,7 @@ export function getStationIndex(station: Station): number {
 export function getFilteredTrips(
   fromStation: Station,
   toStation: Station,
-  scheduleType: "weekday" | "weekend"
+  scheduleType: ScheduleType
 ): ProcessedTrip[] {
   const key = `${fromStation}-${toStation}-${scheduleType}`;
   return scheduleCache[key] || [];
