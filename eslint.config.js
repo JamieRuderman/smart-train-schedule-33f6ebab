@@ -36,6 +36,10 @@ export default tseslint.config(
           ignoreRestSiblings: false,
         },
       ],
+      // Additional TypeScript-specific rules
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/prefer-as-const": "error",
+      "@typescript-eslint/no-non-null-assertion": "warn",
     },
   }
 );

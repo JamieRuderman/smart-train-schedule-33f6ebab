@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Station, FareType } from "@/types/smartSchedule";
 import { APP_CONSTANTS } from "@/lib/fareConstants";
+import { logger } from "@/lib/logger";
 
 export interface UserPreferences {
   lastSelectedStations: {
@@ -37,7 +38,7 @@ export function useUserPreferences() {
         setPreferences((prev) => ({ ...prev, ...parsed }));
       }
     } catch (error) {
-      console.warn("Failed to load user preferences:", error);
+      logger.warn("Failed to load user preferences", error);
     } finally {
       setIsLoaded(true);
     }
@@ -51,7 +52,7 @@ export function useUserPreferences() {
         setPreferences(updated);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch (error) {
-        console.warn("Failed to save user preferences:", error);
+        logger.warn("Failed to save user preferences", error);
       }
     },
     [preferences]
