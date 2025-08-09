@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Station, FareType } from "@/types/smartSchedule";
+import { APP_CONSTANTS } from "@/lib/fareConstants";
 
 export interface UserPreferences {
   lastSelectedStations: {
@@ -17,7 +18,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   selectedFareType: "none",
 };
 
-const STORAGE_KEY = "smart-train-preferences";
+const STORAGE_KEY = APP_CONSTANTS.PREFERENCES_STORAGE_KEY;
 
 /**
  * Custom hook for managing user preferences with localStorage persistence

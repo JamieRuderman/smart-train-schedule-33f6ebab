@@ -1,6 +1,18 @@
-import stations, { stationZoneMap } from "@/data/stations";
+import stations from "@/data/stations";
 import trainSchedules, { type ScheduleType } from "@/data/trainSchedules";
-import { weekdayFerries, weekendFerries } from "@/data/ferrySchedule";
+import {
+  weekdayFerries,
+  weekendFerries,
+  weekdayInboundFerries,
+  weekendInboundFerries,
+} from "@/data/ferrySchedule";
+import {
+  stationIndexMap,
+  getStationZone,
+  calculateZonesBetweenStations,
+} from "./stationUtils";
+import { parseTimeToMinutes, isTimeInPast } from "./timeUtils";
+import { FARE_CONSTANTS } from "./fareConstants";
 import type {
   Station,
   TrainTrip,
@@ -15,6 +27,7 @@ export interface ProcessedTrip {
   trip: number;
   times: string[];
   ferry?: FerryConnection;
+  inboundFerry?: FerryConnection;
   departureTime: string;
   arrivalTime: string;
   fromStation: Station;
@@ -33,14 +46,7 @@ interface ScheduleCache {
   [key: string]: ProcessedTrip[]; // key: "fromStation-toStation-scheduleType"
 }
 
-// Pre-calculated lookup tables
-const stationIndexMap: Record<Station, number> = stations.reduce(
-  (acc, station, index) => {
-    acc[station] = index;
-    return acc;
-  },
-  {} as Record<Station, number>
-);
+// Note: stationIndexMap is now imported from stationUtils
 
 // Pre-calculate all possible station pairs (used for pre-processing)
 const stationPairs: Record<string, StationPair> = {};
@@ -63,12 +69,6 @@ stations.forEach((fromStation, fromIndex) => {
 function processScheduleData(): ScheduleCache {
   const cache: ScheduleCache = {};
 
-  const parseTimeToMinutes = (timeStr: string): number => {
-    const cleaned = timeStr.replace(/[*~]/g, "");
-    const [h, m] = cleaned.split(":").map(Number);
-    return h * 60 + m;
-  };
-
   const findNextFerry = (
     arrivalTime: string,
     ferries: FerryConnection[]
@@ -80,6 +80,37 @@ function processScheduleData(): ScheduleCache {
       }
     }
     return undefined;
+  };
+
+  // Find inbound ferry that arrives before the train departure with the shortest transfer time
+  const findInboundFerry = (
+    trainDepartureAtLarkspur: string,
+    inboundFerries: FerryConnection[]
+  ): FerryConnection | undefined => {
+    if (!inboundFerries.length) return undefined;
+    const depMinutes = parseTimeToMinutes(trainDepartureAtLarkspur);
+
+    // Only consider ferries that arrive before the train departs
+    const validFerries = inboundFerries.filter(
+      (ferry) => parseTimeToMinutes(ferry.arrive) < depMinutes
+    );
+
+    if (!validFerries.length) return undefined;
+
+    // Find the ferry with the shortest transfer time (i.e., arrives closest to but before departure)
+    let best = validFerries[0];
+    let bestTransferTime = depMinutes - parseTimeToMinutes(best.arrive);
+
+    for (let i = 1; i < validFerries.length; i++) {
+      const ferry = validFerries[i];
+      const transferTime = depMinutes - parseTimeToMinutes(ferry.arrive);
+      if (transferTime < bestTransferTime) {
+        best = ferry;
+        bestTransferTime = transferTime;
+      }
+    }
+
+    return best;
   };
 
   // Process weekday schedule
@@ -115,6 +146,13 @@ function processScheduleData(): ScheduleCache {
                         ? findNextFerry(
                             trip.times[stationIndexMap["Larkspur"]],
                             weekdayFerries
+                          )
+                        : undefined,
+                    inboundFerry:
+                      fromStation === "Larkspur"
+                        ? findInboundFerry(
+                            trip.times[stationIndexMap["Larkspur"]],
+                            weekdayInboundFerries
                           )
                         : undefined,
                     departureTime,
@@ -167,6 +205,13 @@ function processScheduleData(): ScheduleCache {
                             weekendFerries
                           )
                         : undefined,
+                    inboundFerry:
+                      fromStation === "Larkspur"
+                        ? findInboundFerry(
+                            trip.times[stationIndexMap["Larkspur"]],
+                            weekendInboundFerries
+                          )
+                        : undefined,
                     departureTime,
                     arrivalTime,
                     fromStation,
@@ -189,9 +234,8 @@ function processScheduleData(): ScheduleCache {
 const scheduleCache = processScheduleData();
 
 // Fast lookup functions
-export function getStationIndex(station: Station): number {
-  return stationIndexMap[station];
-}
+// Station index function is now exported from stationUtils
+export { getStationIndex } from "./stationUtils";
 
 export function getFilteredTrips(
   fromStation: Station,
@@ -202,19 +246,8 @@ export function getFilteredTrips(
   return scheduleCache[key] || [];
 }
 
-// Optimized time comparison with proper timezone handling
-export function isTimeInPast(currentTime: Date, timeString: string): boolean {
-  const cleanTime = timeString.replace(/\*/g, "");
-  const [hoursStr, minutesStr] = cleanTime.split(":");
-  const hours = parseInt(hoursStr, 10);
-  const minutes = parseInt(minutesStr, 10);
-
-  // Create a new date for today with the specific time
-  const tripTime = new Date(currentTime);
-  tripTime.setHours(hours, minutes, 0, 0);
-
-  return tripTime < currentTime;
-}
+// Time comparison function is now exported from timeUtils
+export { isTimeInPast } from "./timeUtils";
 
 // Fast next trip calculation
 export function getNextTripIndex(
@@ -231,19 +264,8 @@ export function getNextTripIndex(
   return -1;
 }
 
-// Fare calculation utilities
-export function getStationZone(station: Station): number {
-  return stationZoneMap[station] || 0;
-}
-
-export function calculateZonesBetweenStations(
-  fromStation: Station,
-  toStation: Station
-): number {
-  const fromZone = getStationZone(fromStation);
-  const toZone = getStationZone(toStation);
-  return Math.abs(toZone - fromZone) + 1; // Include both zones in the calculation
-}
+// Station and fare utilities are now exported from stationUtils
+export { getStationZone, calculateZonesBetweenStations } from "./stationUtils";
 
 export function calculateFare(
   fromStation: Station,
@@ -258,7 +280,7 @@ export function calculateFare(
 
   switch (fareType) {
     case "adult":
-      price = zones * 1.5;
+      price = zones * FARE_CONSTANTS.ADULT_FARE_PER_ZONE;
       description = "Adult (19-64)";
       break;
     case "youth":
@@ -270,11 +292,17 @@ export function calculateFare(
       description = "Senior (65+) - Free";
       break;
     case "disabled":
-      price = zones * 0.75;
+      price =
+        zones *
+        FARE_CONSTANTS.ADULT_FARE_PER_ZONE *
+        FARE_CONSTANTS.DISABLED_DISCOUNT;
       description = "Disabled/Medicare - 50% off";
       break;
     case "clipper-start":
-      price = zones * 0.75;
+      price =
+        zones *
+        FARE_CONSTANTS.ADULT_FARE_PER_ZONE *
+        FARE_CONSTANTS.CLIPPER_START_DISCOUNT;
       description = "Clipper START - 50% off";
       break;
   }

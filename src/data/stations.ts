@@ -1,6 +1,6 @@
 import type { Station, StationZone } from "@/types/smartSchedule";
 
-// Zone mapping based on SMART train route
+// Raw station data - this represents what would come from an API
 export const stationZones: StationZone[] = [
   { station: "Windsor", zone: 1 },
   { station: "Sonoma County Airport", zone: 1 },
@@ -18,16 +18,7 @@ export const stationZones: StationZone[] = [
   { station: "Larkspur", zone: 5 },
 ];
 
-// Derive stations from stationZones to avoid duplication
+// Raw station list - this represents what would come from an API
 const stations: Station[] = stationZones.map(({ station }) => station);
-
-// Quick lookup for station zones
-export const stationZoneMap: Record<Station, number> = stationZones.reduce(
-  (acc, { station, zone }) => {
-    acc[station] = zone;
-    return acc;
-  },
-  {} as Record<Station, number>
-);
 
 export default stations;

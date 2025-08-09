@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import stations from "@/data/stations";
+import { getAllStations, hasFerryConnection } from "@/lib/stationUtils";
 import type { Station } from "@/types/smartSchedule";
 
 interface RouteSelectorProps {
@@ -23,9 +23,6 @@ interface RouteSelectorProps {
   onScheduleTypeChange: (type: "weekday" | "weekend") => void;
   onSwapStations: () => void;
 }
-
-// Utility function to check if station has ferry connection
-const hasFerryConnection = (station: string): boolean => station === "Larkspur";
 
 // Reusable component for displaying station name with ferry icon
 const StationWithFerry = ({
@@ -81,6 +78,8 @@ export const RouteSelector = memo(function RouteSelector({
   onScheduleTypeChange,
   onSwapStations,
 }: RouteSelectorProps) {
+  const stations = getAllStations();
+
   return (
     <Card className="-mt-36 max-w-4xl mx-auto">
       <CardHeader>

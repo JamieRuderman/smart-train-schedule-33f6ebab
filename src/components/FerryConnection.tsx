@@ -13,41 +13,42 @@ import { cn } from "@/lib/utils";
 
 interface FerryConnectionProps {
   ferry: FerryConnectionType;
-  trainArrivalTime: string;
+  trainArrivalTime?: string; // for outbound (train -> ferry)
+  trainDepartureTime?: string; // for inbound (ferry -> train)
   isMobile?: boolean;
   timeFormat?: "12h" | "24h";
+  inbound?: boolean; // when true, show ferry arrival then train departure
   onQuickConnectionClick?: () => void;
 }
 
 export function FerryConnection({
   ferry,
   trainArrivalTime,
+  trainDepartureTime,
   isMobile = false,
   timeFormat = "12h",
+  inbound = false,
   onQuickConnectionClick,
 }: FerryConnectionProps) {
   // Calculate transfer time in minutes
-  const calculateTransferTime = (
-    trainTime: string,
-    ferryTime: string
-  ): number => {
-    // Remove any formatting like * or ~~ from times
-    const cleanTrainTime = trainTime.replace(/[*~]/g, "");
-    const cleanFerryTime = ferryTime.replace(/[*~]/g, "");
-
+  const calculateDelta = (a: string, b: string): number => {
+    const clean = (t: string) => t.replace(/[*~]/g, "");
     const parseTime = (timeStr: string): number => {
       const [hours, minutes] = timeStr.split(":").map(Number);
       return hours * 60 + minutes;
     };
-
-    const trainMinutes = parseTime(cleanTrainTime);
-    const ferryMinutes = parseTime(cleanFerryTime);
-
-    return ferryMinutes - trainMinutes;
+    return parseTime(clean(b)) - parseTime(clean(a));
   };
 
-  const transferTime = calculateTransferTime(trainArrivalTime, ferry.depart);
+  const transferTime = inbound
+    ? trainDepartureTime
+      ? calculateDelta(ferry.arrive, trainDepartureTime)
+      : 0
+    : trainArrivalTime
+    ? calculateDelta(trainArrivalTime, ferry.depart)
+    : 0;
   const isShortConnection = transferTime < 10;
+
   if (isMobile) {
     return (
       <div className="flex-grow w-full">
@@ -57,7 +58,9 @@ export function FerryConnection({
             <TimeDisplay time={ferry.depart} format={timeFormat} />
             <span className="mx-1 opacity-60">→</span>
             <TimeDisplay time={ferry.arrive} format={timeFormat} />
-            <span className="ml-2 opacity-80 text-xs">Ferry</span>
+            <span className="ml-2 opacity-80 text-xs">
+              {inbound ? "Inbound Ferry" : "Outbound Ferry"}
+            </span>
           </div>
           <div
             className={cn(
@@ -109,7 +112,9 @@ export function FerryConnection({
       </div>
       <div className="flex flex-col justify-center items-center pl-4 ml-1 gap-1 border-l ">
         <Ship className="h-5 w-5" />
-        <span className="text-[10px] uppercase">Ferry</span>
+        <span className="text-[10px] uppercase">
+          {inbound ? "Inbound" : "Outbound"}
+        </span>
       </div>
     </div>
   );
