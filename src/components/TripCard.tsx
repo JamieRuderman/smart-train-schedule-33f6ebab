@@ -1,6 +1,7 @@
 import { memo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { calculateTransferTime, isQuickConnection } from "@/lib/timeUtils";
+import { FERRY_CONSTANTS } from "@/lib/fareConstants";
 import type { ProcessedTrip } from "@/lib/scheduleUtils";
 import { TimeDisplay } from "./TimeDisplay";
 import { TrainBadge, NextTrainBadge } from "./TrainBadge";
@@ -10,8 +11,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TripCardProps {
   trip: ProcessedTrip;
-  fromIndex: number;
-  toIndex: number;
   isNextTrip: boolean;
   isPastTrip: boolean;
   showAllTrips: boolean;
@@ -21,8 +20,6 @@ interface TripCardProps {
 
 export const TripCard = memo(function TripCard({
   trip,
-  fromIndex,
-  toIndex,
   isNextTrip,
   isPastTrip,
   showAllTrips,
@@ -88,15 +85,16 @@ export const TripCard = memo(function TripCard({
                 isMobile
               />
             )}
-            {trip.inboundFerry && trip.fromStation === "Larkspur" && (
-              <FerryConnection
-                ferry={trip.inboundFerry}
-                trainDepartureTime={departureTime}
-                timeFormat={timeFormat}
-                isMobile
-                inbound
-              />
-            )}
+            {trip.inboundFerry &&
+              trip.fromStation === FERRY_CONSTANTS.FERRY_STATION && (
+                <FerryConnection
+                  ferry={trip.inboundFerry}
+                  trainDepartureTime={departureTime}
+                  timeFormat={timeFormat}
+                  isMobile
+                  inbound
+                />
+              )}
           </div>
         ) : (
           <div className="flex flex-col md:flex-row items-center gap-4 w-full">
@@ -122,14 +120,15 @@ export const TripCard = memo(function TripCard({
                 timeFormat={timeFormat}
               />
             )}
-            {trip.inboundFerry && trip.fromStation === "Larkspur" && (
-              <FerryConnection
-                ferry={trip.inboundFerry}
-                trainDepartureTime={departureTime}
-                timeFormat={timeFormat}
-                inbound
-              />
-            )}
+            {trip.inboundFerry &&
+              trip.fromStation === FERRY_CONSTANTS.FERRY_STATION && (
+                <FerryConnection
+                  ferry={trip.inboundFerry}
+                  trainDepartureTime={departureTime}
+                  timeFormat={timeFormat}
+                  inbound
+                />
+              )}
           </div>
         )}
       </div>

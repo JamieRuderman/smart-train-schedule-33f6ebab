@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { cn } from "@/lib/utils";
+import { APP_CONSTANTS } from "@/lib/fareConstants";
 
 interface TimeDisplayProps {
   time: string;
@@ -10,7 +11,10 @@ interface TimeDisplayProps {
 /**
  * Formats a 24-hour time string (e.g., "14:35") into the specified format.
  */
-function formatTime(time: string, format: "12h" | "24h" = "12h") {
+function formatTime(
+  time: string,
+  format: "12h" | "24h" = APP_CONSTANTS.DEFAULT_TIME_FORMAT
+) {
   const cleanTime = time.replace(/\*/g, "");
   const [hoursStr, minutesStr] = cleanTime.split(":");
   const hours = parseInt(hoursStr, 10);
@@ -32,7 +36,7 @@ function formatTime(time: string, format: "12h" | "24h" = "12h") {
 export const TimeDisplay = memo(function TimeDisplay({
   time,
   isNextTrip = false,
-  format = "12h",
+  format = APP_CONSTANTS.DEFAULT_TIME_FORMAT,
   className,
 }: TimeDisplayProps & { className?: string }) {
   return (

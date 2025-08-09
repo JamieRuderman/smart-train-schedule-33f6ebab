@@ -15,8 +15,6 @@ export function TrainScheduleApp() {
     showAllTrips,
     currentTime,
     showServiceAlert,
-    fromIndex,
-    toIndex,
     filteredTrips,
     setFromStation,
     setToStation,
@@ -58,8 +56,6 @@ export function TrainScheduleApp() {
             filteredTrips={filteredTrips}
             fromStation={fromStation}
             toStation={toStation}
-            fromIndex={fromIndex}
-            toIndex={toIndex}
             currentTime={currentTime}
             showAllTrips={showAllTrips}
             onToggleShowAllTrips={toggleShowAllTrips}

@@ -6,13 +6,9 @@ import {
   weekdayInboundFerries,
   weekendInboundFerries,
 } from "@/data/ferrySchedule";
-import {
-  stationIndexMap,
-  getStationZone,
-  calculateZonesBetweenStations,
-} from "./stationUtils";
+import { stationIndexMap, calculateZonesBetweenStations } from "./stationUtils";
 import { parseTimeToMinutes, isTimeInPast } from "./timeUtils";
-import { FARE_CONSTANTS } from "./fareConstants";
+import { FARE_CONSTANTS, FERRY_CONSTANTS } from "./fareConstants";
 import type {
   Station,
   TrainTrip,
@@ -142,16 +138,20 @@ function processScheduleData(): ScheduleCache {
                     trip: trip.trip,
                     times: trip.times,
                     ferry:
-                      toStation === "Larkspur"
+                      toStation === FERRY_CONSTANTS.FERRY_STATION
                         ? findNextFerry(
-                            trip.times[stationIndexMap["Larkspur"]],
+                            trip.times[
+                              stationIndexMap[FERRY_CONSTANTS.FERRY_STATION]
+                            ],
                             weekdayFerries
                           )
                         : undefined,
                     inboundFerry:
-                      fromStation === "Larkspur"
+                      fromStation === FERRY_CONSTANTS.FERRY_STATION
                         ? findInboundFerry(
-                            trip.times[stationIndexMap["Larkspur"]],
+                            trip.times[
+                              stationIndexMap[FERRY_CONSTANTS.FERRY_STATION]
+                            ],
                             weekdayInboundFerries
                           )
                         : undefined,
@@ -199,16 +199,20 @@ function processScheduleData(): ScheduleCache {
                     trip: trip.trip,
                     times: trip.times,
                     ferry:
-                      toStation === "Larkspur"
+                      toStation === FERRY_CONSTANTS.FERRY_STATION
                         ? findNextFerry(
-                            trip.times[stationIndexMap["Larkspur"]],
+                            trip.times[
+                              stationIndexMap[FERRY_CONSTANTS.FERRY_STATION]
+                            ],
                             weekendFerries
                           )
                         : undefined,
                     inboundFerry:
-                      fromStation === "Larkspur"
+                      fromStation === FERRY_CONSTANTS.FERRY_STATION
                         ? findInboundFerry(
-                            trip.times[stationIndexMap["Larkspur"]],
+                            trip.times[
+                              stationIndexMap[FERRY_CONSTANTS.FERRY_STATION]
+                            ],
                             weekendInboundFerries
                           )
                         : undefined,
@@ -252,11 +256,10 @@ export { isTimeInPast } from "./timeUtils";
 // Fast next trip calculation
 export function getNextTripIndex(
   trips: ProcessedTrip[],
-  fromIndex: number,
   currentTime: Date
 ): number {
   for (let i = 0; i < trips.length; i++) {
-    const departureTime = trips[i].times[fromIndex];
+    const departureTime = trips[i].departureTime;
     if (!isTimeInPast(currentTime, departureTime)) {
       return i;
     }

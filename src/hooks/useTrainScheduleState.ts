@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import type { Station } from "@/types/smartSchedule";
-import { getFilteredTrips, getStationIndex } from "@/lib/scheduleUtils";
+import { getFilteredTrips } from "@/lib/scheduleUtils";
 import { useUserPreferences } from "./useUserPreferences";
 import { isWeekend, createMinuteInterval } from "@/lib/utils";
 
@@ -45,8 +45,6 @@ export function useTrainScheduleState() {
   }, []);
 
   // Derived values
-  const fromIndex = state.fromStation ? getStationIndex(state.fromStation) : -1;
-  const toIndex = state.toStation ? getStationIndex(state.toStation) : -1;
 
   const filteredTrips = useMemo(() => {
     if (!state.fromStation || !state.toStation) return [];
@@ -100,8 +98,6 @@ export function useTrainScheduleState() {
   return {
     // State
     ...state,
-    fromIndex,
-    toIndex,
     filteredTrips,
     isLoaded,
 

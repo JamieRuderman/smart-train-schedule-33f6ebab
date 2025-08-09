@@ -1,13 +1,6 @@
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import type { FerryConnection as FerryConnectionType } from "@/types/smartSchedule";
 import { TimeDisplay } from "./TimeDisplay";
+import { APP_CONSTANTS, FARE_CONSTANTS } from "@/lib/fareConstants";
 import { Ship, AlertTriangle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +11,6 @@ interface FerryConnectionProps {
   isMobile?: boolean;
   timeFormat?: "12h" | "24h";
   inbound?: boolean; // when true, show ferry arrival then train departure
-  onQuickConnectionClick?: () => void;
 }
 
 export function FerryConnection({
@@ -26,9 +18,8 @@ export function FerryConnection({
   trainArrivalTime,
   trainDepartureTime,
   isMobile = false,
-  timeFormat = "12h",
+  timeFormat = APP_CONSTANTS.DEFAULT_TIME_FORMAT,
   inbound = false,
-  onQuickConnectionClick,
 }: FerryConnectionProps) {
   // Calculate transfer time in minutes
   const calculateDelta = (a: string, b: string): number => {
@@ -47,7 +38,8 @@ export function FerryConnection({
     : trainArrivalTime
     ? calculateDelta(trainArrivalTime, ferry.depart)
     : 0;
-  const isShortConnection = transferTime < 10;
+  const isShortConnection =
+    transferTime < FARE_CONSTANTS.QUICK_CONNECTION_THRESHOLD;
 
   if (isMobile) {
     return (

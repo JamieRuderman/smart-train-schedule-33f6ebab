@@ -5,14 +5,13 @@ import { NoMoreTrainsAlert } from "./NoMoreTrainsAlert";
 import type { ProcessedTrip } from "@/lib/scheduleUtils";
 import { isTimeInPast, getNextTripIndex } from "@/lib/scheduleUtils";
 import { useStationDirection } from "@/hooks/useStationDirection";
+import { FERRY_CONSTANTS } from "@/lib/fareConstants";
 import type { Station } from "@/types/smartSchedule";
 
 interface ScheduleResultsProps {
   filteredTrips: ProcessedTrip[];
   fromStation: Station;
   toStation: Station;
-  fromIndex: number;
-  toIndex: number;
   currentTime: Date;
   showAllTrips: boolean;
   onToggleShowAllTrips: () => void;
@@ -23,8 +22,6 @@ export function ScheduleResults({
   filteredTrips,
   fromStation,
   toStation,
-  fromIndex,
-  toIndex,
   currentTime,
   showAllTrips,
   onToggleShowAllTrips,
@@ -34,7 +31,7 @@ export function ScheduleResults({
 
   const nextTripIndex =
     filteredTrips.length > 0
-      ? getNextTripIndex(filteredTrips, fromIndex, currentTime)
+      ? getNextTripIndex(filteredTrips, currentTime)
       : -1;
 
   const displayedTrips = showAllTrips
@@ -61,21 +58,20 @@ export function ScheduleResults({
           aria-label="Train schedule results"
         >
           {displayedTrips.map((trip, index) => {
-            const isPastTrip = isTimeInPast(currentTime, trip.times[fromIndex]);
+            const isPastTrip = isTimeInPast(currentTime, trip.departureTime);
             // Find the next trip using the same time logic as isPastTrip
             const isNextTrip =
               !isPastTrip &&
               displayedTrips.slice(0, index).every((prevTrip) => {
-                return isTimeInPast(currentTime, prevTrip.times[fromIndex]);
+                return isTimeInPast(currentTime, prevTrip.departureTime);
               });
-            const showFerry = trip.ferry && toStation === "Larkspur";
+            const showFerry =
+              trip.ferry && toStation === FERRY_CONSTANTS.FERRY_STATION;
 
             return (
               <TripCard
                 key={trip.trip}
                 trip={trip}
-                fromIndex={fromIndex}
-                toIndex={toIndex}
                 isNextTrip={isNextTrip}
                 isPastTrip={isPastTrip}
                 showAllTrips={showAllTrips}

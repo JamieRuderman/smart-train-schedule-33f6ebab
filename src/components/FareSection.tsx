@@ -1,8 +1,8 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign } from "lucide-react";
 import { calculateFare, getAllFareOptions } from "@/lib/scheduleUtils";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { FARE_CONSTANTS } from "@/lib/fareConstants";
 import type { Station, FareType } from "@/types/smartSchedule";
 
 interface FareSectionProps {
@@ -103,7 +103,10 @@ export function FareSection({ fromStation, toStation }: FareSectionProps) {
 
         {/* Additional Info */}
         <div className="text-xs text-muted-foreground py-2">
-          <p>• Fares are zone-based ($1.50 per zone for adults)</p>
+          <p>
+            • Fares are zone-based ($
+            {FARE_CONSTANTS.ADULT_FARE_PER_ZONE.toFixed(2)} per zone for adults)
+          </p>
           <p>• Youth (0-18) and seniors (65+) ride free</p>
           <p>• Discounts for disabled / Medicare and low-income riders</p>
           <p>
