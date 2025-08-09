@@ -90,14 +90,20 @@ function processScheduleData(): ScheduleCache {
 
     const depMinutes = parseTimeToMinutes(trainDepartureTime);
 
-    // Filter ferries that arrive before train departs, then find the one with shortest transfer time
-    return inboundFerries
-      .filter((ferry) => parseTimeToMinutes(ferry.arrive) < depMinutes)
-      .reduce((best, ferry) => {
-        const transferTime = depMinutes - parseTimeToMinutes(ferry.arrive);
-        const bestTransferTime = depMinutes - parseTimeToMinutes(best.arrive);
-        return transferTime < bestTransferTime ? ferry : best;
-      });
+    // Filter ferries that arrive before train departs
+    const validFerries = inboundFerries.filter(
+      (ferry) => parseTimeToMinutes(ferry.arrive) < depMinutes
+    );
+
+    // If no ferries arrive before train departure, return undefined
+    if (validFerries.length === 0) return undefined;
+
+    // Find the one with shortest transfer time
+    return validFerries.reduce((best, ferry) => {
+      const transferTime = depMinutes - parseTimeToMinutes(ferry.arrive);
+      const bestTransferTime = depMinutes - parseTimeToMinutes(best.arrive);
+      return transferTime < bestTransferTime ? ferry : best;
+    });
   };
 
   /**

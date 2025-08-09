@@ -39,9 +39,9 @@ export function FareSection({ fromStation, toStation }: FareSectionProps) {
         <CardTitle className="flex items-center justify-between gap-2">
           Fare Information
           {selectedFareType === "none" && (
-            <h4 className="text-sm font-medium text-muted-foreground">
+            <span className="text-sm font-medium text-muted-foreground">
               Select your fare
-            </h4>
+            </span>
           )}
         </CardTitle>
       </CardHeader>

@@ -23,6 +23,7 @@ export function TrainScheduleApp() {
     toggleServiceAlert,
     swapStations,
   } = useTrainScheduleState();
+  console.log(filteredTrips);
 
   return (
     <div className="min-h-screen bg-card md:bg-background">
