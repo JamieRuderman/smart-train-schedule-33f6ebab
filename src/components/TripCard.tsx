@@ -89,7 +89,7 @@ export const TripCard = memo(function TripCard({
         {isMobile ? (
           <div className="flex flex-col items-center ml-4 w-full">
             <div className="flex flex-row gap-2 w-full items-center">
-              <div className="flex flex-row gap-2 items-center text-sm whitespace-nowrap">
+              <div className="flex flex-row gap-2 items-center text-md whitespace-nowrap">
                 <TimeDisplay time={trip.times[fromIndex]} format={timeFormat} />
                 <span className="text-muted-foreground">→</span>
                 <TimeDisplay time={trip.times[toIndex]} format={timeFormat} />
@@ -106,8 +106,8 @@ export const TripCard = memo(function TripCard({
             )}
           </div>
         ) : (
-          <div className="flex flex-col md:flex-row items-center gap-4 ml-4 w-full">
-            <div className="flex flex-row gap-2 text-sm">
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full">
+            <div className="flex flex-row gap-2 text-md">
               <TimeDisplay
                 time={trip.times[fromIndex]}
                 isNextTrip={isNextTrip}

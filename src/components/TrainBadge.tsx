@@ -17,7 +17,7 @@ export function TrainBadge({
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 w-[5rem]",
+        "flex items-center gap-1.5 w-[6rem]",
         isNextTrip && "text-smart-train-green",
         isPastTrip && showAllTrips && "text-muted-foreground/60"
       )}
