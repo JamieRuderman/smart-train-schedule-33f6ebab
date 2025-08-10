@@ -4,7 +4,7 @@ import { RouteSelector } from "./RouteSelector";
 import { ServiceAlert } from "./ServiceAlert";
 import { ScheduleResults } from "./ScheduleResults";
 import { FareSection } from "./FareSection";
-import { ThemeToggle } from "./ThemeToggle";
+import BottomInfoBar from "./BottomInfoBar";
 import { NoTripsFound } from "./NoTripsFound";
 
 export function TrainScheduleApp() {
@@ -71,10 +71,8 @@ export function TrainScheduleApp() {
           <FareSection fromStation={fromStation} toStation={toStation} />
         )}
 
-        {/* Theme Toggle at Bottom */}
-        <div className="container max-w-4xl mx-auto px-3 md:px-0 pb-8">
-          <ThemeToggle />
-        </div>
+        {/* Theme Toggle and Service Alerts */}
+        <BottomInfoBar />
       </main>
     </div>
   );
