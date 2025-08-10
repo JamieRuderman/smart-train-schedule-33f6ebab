@@ -41,43 +41,20 @@ export function FerryConnection({
   const isShortConnection =
     transferTime < FARE_CONSTANTS.QUICK_CONNECTION_THRESHOLD;
 
-  if (isMobile) {
-    return (
-      <div className="flex-grow w-full">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center text-smart-train-green text-sm">
-            <Ship className="h-4 w-4 mr-2" />
-            <TimeDisplay time={ferry.depart} format={timeFormat} />
-            <span className="mx-1 opacity-60">→</span>
-            <TimeDisplay time={ferry.arrive} format={timeFormat} />
-            <span className="ml-2 opacity-80 text-xs">
-              {inbound ? "Inbound Ferry" : "Outbound Ferry"}
-            </span>
-          </div>
-          <div
-            className={cn(
-              "flex items-center gap-2 text-xs",
-              isShortConnection
-                ? "text-smart-gold font-medium"
-                : "text-muted-foreground"
-            )}
-          >
-            {isShortConnection ? (
-              <AlertTriangle className="h-3 w-3" />
-            ) : (
-              <Clock className="h-3 w-3" />
-            )}
-            {transferTime} min transfer
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex-grow flex items-center justify-end gap-3">
-      <div className="flex flex-col items-end gap-1">
-        <div className="flex items-center text-sm text-muted-foreground">
+    <div
+      className={cn(
+        "flex-grow flex items-center justify-end gap-3 text-muted-foreground",
+        isMobile && "flex-row-reverse items-start pt-2"
+      )}
+    >
+      <div
+        className={cn(
+          "flex flex-col items-end gap-1",
+          isMobile && "flex-col-reverse items-start"
+        )}
+      >
+        <div className="flex items-center text-sm">
           <TimeDisplay time={ferry.depart} format={timeFormat} />
           <span className="opacity-60">→</span>
           <TimeDisplay
@@ -89,9 +66,7 @@ export function FerryConnection({
         <div
           className={cn(
             "flex items-center gap-2 text-xs leading-none",
-            isShortConnection
-              ? "text-smart-gold font-medium"
-              : "text-muted-foreground"
+            isShortConnection && "text-smart-gold font-medium"
           )}
         >
           {isShortConnection ? (
@@ -102,7 +77,12 @@ export function FerryConnection({
           {transferTime} min transfer
         </div>
       </div>
-      <div className="flex flex-col justify-center items-center pl-4 ml-1 gap-1 border-l ">
+      <div
+        className={cn(
+          "flex flex-col justify-center items-center gap-1",
+          isMobile ? "border-r pr-4 mr-1" : "border-l pl-4 ml-1"
+        )}
+      >
         <Ship className="h-5 w-5" />
         <span className="text-[10px] uppercase">
           {inbound ? "Inbound" : "Outbound"}

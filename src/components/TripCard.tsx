@@ -31,12 +31,22 @@ export const TripCard = memo(function TripCard({
   const arrivalTime = trip.arrivalTime;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const hasQuickConnection =
+  const hasOutboundQuickConnection =
     showFerry &&
     trip.ferry &&
     isQuickConnection(
       calculateTransferTime(trip.arrivalTime, trip.ferry.depart)
     );
+
+  const hasInboundQuickConnection =
+    trip.inboundFerry &&
+    trip.fromStation === FERRY_CONSTANTS.FERRY_STATION &&
+    isQuickConnection(
+      calculateTransferTime(trip.inboundFerry.arrive, trip.departureTime)
+    );
+
+  const hasQuickConnection =
+    hasOutboundQuickConnection || hasInboundQuickConnection;
 
   return (
     <>
@@ -68,14 +78,13 @@ export const TripCard = memo(function TripCard({
           showAllTrips={showAllTrips}
         />
         {isMobile ? (
-          <div className="flex flex-col items-center ml-4 w-full">
-            <div className="flex flex-row gap-2 w-full items-center">
-              <div className="flex flex-row gap-2 items-center text-md whitespace-nowrap">
+          <div className="flex flex-col items-start ml-4 w-full">
+            <div className="flex flex-row gap-2 w-full items-center justify-between">
+              <div className="flex flex-row gap-2 items-center text-lg whitespace-nowrap">
                 <TimeDisplay time={departureTime} format={timeFormat} />
                 <span className="text-muted-foreground">→</span>
                 <TimeDisplay time={arrivalTime} format={timeFormat} />
               </div>
-              {isNextTrip && <NextTrainBadge />}
             </div>
             {showFerry && trip.ferry && (
               <FerryConnection
@@ -133,10 +142,11 @@ export const TripCard = memo(function TripCard({
         )}
       </div>
 
-      {hasQuickConnection && trip.ferry && (
+      {hasQuickConnection && (
         <QuickConnectionModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          isInbound={hasInboundQuickConnection}
         />
       )}
     </>

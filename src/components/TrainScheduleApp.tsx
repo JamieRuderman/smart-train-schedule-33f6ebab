@@ -23,7 +23,6 @@ export function TrainScheduleApp() {
     toggleServiceAlert,
     swapStations,
   } = useTrainScheduleState();
-  console.log(filteredTrips);
 
   return (
     <div className="min-h-screen bg-card md:bg-background">
@@ -71,12 +70,12 @@ export function TrainScheduleApp() {
         {fromStation && toStation && (
           <FareSection fromStation={fromStation} toStation={toStation} />
         )}
-      </main>
 
-      {/* Theme Toggle at Bottom */}
-      <div className="container max-w-4xl mx-auto px-8 md:px-0 pb-8">
-        <ThemeToggle />
-      </div>
+        {/* Theme Toggle at Bottom */}
+        <div className="container max-w-4xl mx-auto px-3 md:px-0 pb-8">
+          <ThemeToggle />
+        </div>
+      </main>
     </div>
   );
 }

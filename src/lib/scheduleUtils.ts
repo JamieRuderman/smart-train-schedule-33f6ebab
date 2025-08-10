@@ -128,10 +128,8 @@ function processScheduleData(): ScheduleCache {
 
                 // Only include trips that match the correct direction for this station pair
                 if (stationPair && stationPair.direction === direction) {
-                  const minIndex = Math.min(fromIndex, toIndex);
-                  const maxIndex = Math.max(fromIndex, toIndex);
-                  const departureTime = trip.times[minIndex];
-                  const arrivalTime = trip.times[maxIndex];
+                  const departureTime = trip.times[fromIndex];
+                  const arrivalTime = trip.times[toIndex];
                   const isValid =
                     !departureTime.includes("~~") &&
                     !arrivalTime.includes("~~");
