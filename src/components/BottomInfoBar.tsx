@@ -5,8 +5,8 @@ import { ThemeToggle } from "./ThemeToggle";
 export function BottomInfoBar() {
   return (
     <div className="container max-w-4xl mx-auto px-3 md:px-0 pb-8">
-      <div className="rounded-md border bg-background px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-muted-foreground">
-        <div className="flex flex-col gap-2 text-center sm:text-left">
+      <div className="rounded-md border bg-background px-4 py-3 flex items-start justify-between gap-3 text-sm text-muted-foreground">
+        <div className="flex flex-col gap-2 text-left flex-1">
           <div className="flex items-start gap-2 justify-center sm:justify-start">
             <Bell
               aria-hidden
@@ -47,7 +47,7 @@ export function BottomInfoBar() {
             </p>
           </div>
         </div>
-        <div className="flex justify-center sm:justify-end">
+        <div className="ml-auto shrink-0 self-center">
           <ThemeToggle />
         </div>
       </div>

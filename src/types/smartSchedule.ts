@@ -61,3 +61,16 @@ export interface TrainSchedule {
   southbound: TrainTrip[];
   northbound: TrainTrip[];
 }
+
+// Service alerts
+export type AlertSeverity = "info" | "warning" | "critical";
+
+export interface ServiceAlertData {
+  id: string;
+  message: string;
+  title?: string;
+  severity?: AlertSeverity;
+  startsAt?: string; // ISO date string (YYYY-MM-DD or full ISO)
+  endsAt?: string; // ISO date string
+  active?: boolean; // explicit switch to enable/disable
+}

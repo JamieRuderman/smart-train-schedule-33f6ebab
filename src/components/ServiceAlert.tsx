@@ -1,6 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, X, ChevronDown } from "lucide-react";
+import serviceAlerts from "@/data/serviceAlerts";
+import type { ServiceAlertData } from "@/types/smartSchedule";
 
 interface ServiceAlertProps {
   showServiceAlert: boolean;
@@ -11,6 +13,20 @@ export function ServiceAlert({
   showServiceAlert,
   onToggleServiceAlert,
 }: ServiceAlertProps) {
+  const now = new Date();
+
+  const isAlertActive = (alert: ServiceAlertData) => {
+    if (alert.active === false) return false;
+    const startsOk = alert.startsAt ? new Date(alert.startsAt) <= now : true;
+    const endsOk = alert.endsAt ? now <= new Date(alert.endsAt) : true;
+    return startsOk && endsOk && (alert.active ?? true);
+  };
+
+  const activeAlerts = serviceAlerts.filter(isAlertActive);
+  if (activeAlerts.length === 0) {
+    return null;
+  }
+
   if (showServiceAlert) {
     return (
       <Card className="ring-2 ring-smart-gold/50 bg-smart-gold/5 border border-smart-gold rounded-lg md:rounded-lg max-w-4xl mx-auto">
@@ -24,18 +40,17 @@ export function ServiceAlert({
           >
             <X className="h-4 w-4 text-smart-gold" />
           </Button>
-          <div className="flex items-start gap-3 pr-8">
-            <AlertCircle className="h-4 w-4 text-smart-gold mt-1 flex-shrink-0" />
-            <div>
-              <p className="font-medium text-smart-gold">Service Alert</p>
-              <p className="text-sm text-muted-foreground">
-                Effective Monday, June 23, 2025, the first three Southbound
-                weekday trips departing from Windsor are temporarily suspended.
-                These trips will depart from Sonoma County Airport Station at
-                their regularly scheduled times.
-              </p>
+          {activeAlerts.map((alert) => (
+            <div key={alert.id} className="flex items-start gap-3 pr-8">
+              <AlertCircle className="h-4 w-4 text-smart-gold mt-1 flex-shrink-0" />
+              <div>
+                <p className="font-medium text-smart-gold">
+                  {alert.title ?? "Service Alert"}
+                </p>
+                <p className="text-sm text-muted-foreground">{alert.message}</p>
+              </div>
             </div>
-          </div>
+          ))}
         </CardContent>
       </Card>
     );
