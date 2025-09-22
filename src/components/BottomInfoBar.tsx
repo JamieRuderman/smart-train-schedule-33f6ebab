@@ -4,7 +4,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 export function BottomInfoBar() {
   return (
-    <div className="container max-w-4xl mx-auto px-3 md:px-0 pb-8">
+    <div className="container max-w-4xl mx-auto px-3 md:px-0 pb-8 space-y-3">
       <div className="rounded-md border bg-background px-4 py-3 flex items-start justify-between gap-3 text-sm text-muted-foreground">
         <div className="flex flex-col gap-2 text-left flex-1">
           <div className="flex items-start gap-2 justify-center sm:justify-start">
@@ -51,6 +51,18 @@ export function BottomInfoBar() {
           <ThemeToggle />
         </div>
       </div>
+      <p className="text-center text-xs text-muted-foreground">
+        Data provided by{" "}
+        <a
+          href="https://511.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-2 hover:text-foreground"
+        >
+          511.org
+        </a>
+        .
+      </p>
     </div>
   );
 }

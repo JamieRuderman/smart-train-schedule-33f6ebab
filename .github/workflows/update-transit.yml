@@ -1,0 +1,36 @@
+name: Update Transit Feeds
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - run: npm ci
+      - name: Refresh GTFS snapshots
+        run: npm run update-transit
+        env:
+          TRANSIT_511_API_KEY: ${{ secrets.TRANSIT_511_API_KEY }}
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "No schedule changes detected."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: refresh transit feeds"
+          git push

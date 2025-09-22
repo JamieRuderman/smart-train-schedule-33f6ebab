@@ -93,12 +93,22 @@ Train schedule data is organized by:
 - **Schedule Types**: Weekday and Weekend/Holiday
 - **Ferry Connections**: Integrated Larkspur-San Francisco ferry schedules
 
+## ⏱️ Timetable Updates
+
+- Set the `TRANSIT_511_API_KEY` environment variable with your 511.org developer token (the updater automatically reads it from `.env`, `.env.local`, or your shell environment).
+- Run `npm run update-transit` to download the latest SMART (`operator_id=SA`) and Golden Gate Ferry (`operator_id=GF`) GTFS feeds and rewrite the generated data under `src/data/generated/`.
+- The `npm run update-build` script (ideal for Vercel builds) runs the update step before compiling so deployments stay in sync with the latest feeds.
+- A ready-to-use GitHub Action lives at `.github/workflows/update-transit.yml`; add the `TRANSIT_511_API_KEY` repository secret and it will run weekly on the Hobby tier without additional cost.
+- If you need more frequent updates later, you can add a Vercel Cron Job that hits a serverless function which triggers a redeploy, but the GitHub Action workflow keeps everything free today.
+
 ## 🔧 Development
 
 ### Available Scripts
 
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
+- `npm run update-build` - Update transit data then build (attach this to Vercel)
+- `npm run update-transit` - Refresh schedules from the 511.org GTFS feeds
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
@@ -112,10 +122,10 @@ src/
 │   ├── RouteSelector.tsx     # Station selection interface
 │   ├── ScheduleResults.tsx   # Schedule display
 │   └── ...
-├── data/                # Static schedule data
+├── data/                # Schedule data
+│   ├── generated/       # Auto-generated GTFS snapshots (e.g., trainSchedules.generated.ts)
 │   ├── stations.ts      # Station definitions
-│   ├── weekdaySchedule.ts   # Weekday timetables
-│   └── weekendSchedule.ts   # Weekend timetables
+│   └── trainSchedules.ts # Re-export of generated data
 ├── lib/                 # Utility functions
 │   ├── scheduleUtils.ts # Schedule processing logic
 │   └── utils.ts         # General utilities
