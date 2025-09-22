@@ -44,7 +44,6 @@ export const TimeDisplay = memo(function TimeDisplay({
       className={cn(
         "font-medium",
         isNextTrip && "text-smart-train-green",
-        "min-w-16",
         className
       )}
     >

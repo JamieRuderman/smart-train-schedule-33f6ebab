@@ -33,9 +33,9 @@ export const TripCard = memo(function TripCard({
 
   const hasOutboundQuickConnection =
     showFerry &&
-    trip.ferry &&
+    trip.outboundFerry &&
     isQuickConnection(
-      calculateTransferTime(trip.arrivalTime, trip.ferry.depart)
+      calculateTransferTime(trip.arrivalTime, trip.outboundFerry.depart)
     );
 
   const hasInboundQuickConnection =
@@ -86,9 +86,9 @@ export const TripCard = memo(function TripCard({
                 <TimeDisplay time={arrivalTime} format={timeFormat} />
               </div>
             </div>
-            {showFerry && trip.ferry && (
+            {showFerry && trip.outboundFerry && (
               <FerryConnection
-                ferry={trip.ferry}
+                ferry={trip.outboundFerry}
                 trainArrivalTime={arrivalTime}
                 timeFormat={timeFormat}
                 isMobile
@@ -112,7 +112,7 @@ export const TripCard = memo(function TripCard({
                 time={departureTime}
                 isNextTrip={isNextTrip}
                 format={timeFormat}
-                className="text-right"
+                className="text-right min-w-20"
               />
               <span className="text-muted-foreground">→</span>
               <TimeDisplay
@@ -122,9 +122,9 @@ export const TripCard = memo(function TripCard({
               />
             </div>
             {isNextTrip && <NextTrainBadge />}
-            {showFerry && trip.ferry && (
+            {showFerry && trip.outboundFerry && (
               <FerryConnection
-                ferry={trip.ferry}
+                ferry={trip.outboundFerry}
                 trainArrivalTime={arrivalTime}
                 timeFormat={timeFormat}
               />

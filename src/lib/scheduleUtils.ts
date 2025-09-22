@@ -23,7 +23,7 @@ import type {
 export interface ProcessedTrip {
   trip: number;
   times: string[];
-  ferry?: FerryConnection;
+  outboundFerry?: FerryConnection;
   inboundFerry?: FerryConnection;
   departureTime: string;
   arrivalTime: string;
@@ -69,7 +69,7 @@ function processScheduleData(): ScheduleCache {
   /**
    * Finds the next available outbound ferry after a train arrival
    */
-  const findNextFerry = (
+  const findOutboundFerry = (
     arrivalTime: string,
     ferries: FerryConnection[]
   ): FerryConnection | undefined => {
@@ -84,14 +84,13 @@ function processScheduleData(): ScheduleCache {
    */
   const findInboundFerry = (
     trainDepartureTime: string,
-    inboundFerries: FerryConnection[]
+    ferries: FerryConnection[]
   ): FerryConnection | undefined => {
-    if (!inboundFerries.length) return undefined;
-
+    if (!ferries.length) return undefined;
     const depMinutes = parseTimeToMinutes(trainDepartureTime);
 
     // Filter ferries that arrive before train departs
-    const validFerries = inboundFerries.filter(
+    const validFerries = ferries.filter(
       (ferry) => parseTimeToMinutes(ferry.arrive) < depMinutes
     );
 
@@ -106,6 +105,22 @@ function processScheduleData(): ScheduleCache {
     });
   };
 
+  const getTimeForStation = (
+    times: string[],
+    station: Station,
+    direction: "southbound" | "northbound"
+  ): string => {
+    const stationIndex = stationIndexMap[station];
+    if (stationIndex === undefined) return "~~";
+
+    if (direction === "northbound") {
+      const reversedIndex = times.length - 1 - stationIndex;
+      return times[reversedIndex] ?? "~~";
+    }
+
+    return times[stationIndex] ?? "~~";
+  };
+
   /**
    * Processes schedule data for a given schedule type and adds to cache
    */
@@ -115,7 +130,7 @@ function processScheduleData(): ScheduleCache {
     outboundFerries: FerryConnection[],
     inboundFerries: FerryConnection[]
   ) => {
-    (Object.entries(scheduleData) as [string, TrainTrip[]][]).forEach(
+    (Object.entries(scheduleData) as [keyof TrainSchedule, TrainTrip[]][]).forEach(
       ([direction, trips]) => {
         trips.forEach((trip) => {
           // Pre-calculate validity for all possible station combinations
@@ -127,9 +142,20 @@ function processScheduleData(): ScheduleCache {
                 const stationPair = stationPairs[pairKey];
 
                 // Only include trips that match the correct direction for this station pair
-                if (stationPair && stationPair.direction === direction) {
-                  const departureTime = trip.times[fromIndex];
-                  const arrivalTime = trip.times[toIndex];
+                if (
+                  stationPair &&
+                  stationPair.direction === direction
+                ) {
+                  const departureTime = getTimeForStation(
+                    trip.times,
+                    fromStation,
+                    direction
+                  );
+                  const arrivalTime = getTimeForStation(
+                    trip.times,
+                    toStation,
+                    direction
+                  );
                   const isValid =
                     !departureTime.includes("~~") &&
                     !arrivalTime.includes("~~");
@@ -138,24 +164,29 @@ function processScheduleData(): ScheduleCache {
                     const key = `${fromStation}-${toStation}-${scheduleType}`;
                     if (!cache[key]) cache[key] = [];
 
+                    const larkspurTime = getTimeForStation(
+                      trip.times,
+                      FERRY_CONSTANTS.FERRY_STATION,
+                      direction
+                    );
+                    const hasLarkspurTime = !larkspurTime.includes("~~");
+
                     cache[key].push({
                       trip: trip.trip,
                       times: trip.times,
-                      ferry:
-                        toStation === FERRY_CONSTANTS.FERRY_STATION
-                          ? findNextFerry(
-                              trip.times[
-                                stationIndexMap[FERRY_CONSTANTS.FERRY_STATION]
-                              ],
+                      outboundFerry:
+                        toStation === FERRY_CONSTANTS.FERRY_STATION &&
+                        hasLarkspurTime
+                          ? findOutboundFerry(
+                              larkspurTime,
                               outboundFerries
                             )
                           : undefined,
                       inboundFerry:
-                        fromStation === FERRY_CONSTANTS.FERRY_STATION
+                        fromStation === FERRY_CONSTANTS.FERRY_STATION &&
+                        hasLarkspurTime
                           ? findInboundFerry(
-                              trip.times[
-                                stationIndexMap[FERRY_CONSTANTS.FERRY_STATION]
-                              ],
+                              larkspurTime,
                               inboundFerries
                             )
                           : undefined,

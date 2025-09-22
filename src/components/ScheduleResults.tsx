@@ -66,7 +66,7 @@ export function ScheduleResults({
                 return isTimeInPast(currentTime, prevTrip.departureTime);
               });
             const showFerry =
-              trip.ferry && toStation === FERRY_CONSTANTS.FERRY_STATION;
+              trip.outboundFerry && toStation === FERRY_CONSTANTS.FERRY_STATION;
 
             return (
               <TripCard

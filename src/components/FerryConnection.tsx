@@ -28,18 +28,27 @@ export function FerryConnection({
       const [hours, minutes] = timeStr.split(":").map(Number);
       return hours * 60 + minutes;
     };
-    return parseTime(clean(b)) - parseTime(clean(a));
+    const delta = parseTime(clean(b)) - parseTime(clean(a));
+    return delta;
   };
 
-  const transferTime = inbound
-    ? trainDepartureTime
-      ? calculateDelta(ferry.arrive, trainDepartureTime)
-      : 0
-    : trainArrivalTime
-    ? calculateDelta(trainArrivalTime, ferry.depart)
-    : 0;
+  let transferTime = 0;
+
+  if (inbound) {
+    if (trainDepartureTime) {
+      transferTime = calculateDelta(ferry.arrive, trainDepartureTime);
+    }
+  } else {
+    if (trainArrivalTime) {
+      transferTime = calculateDelta(trainArrivalTime, ferry.depart);
+    }
+  }
+
   const isShortConnection =
     transferTime < FARE_CONSTANTS.QUICK_CONNECTION_THRESHOLD;
+
+  const displayLabel = inbound ? "arrives" : "departs";
+  const displayTime = inbound ? ferry.arrive : ferry.depart;
 
   return (
     <div
@@ -48,20 +57,10 @@ export function FerryConnection({
         isMobile && "flex-row-reverse items-start pt-2"
       )}
     >
-      <div
-        className={cn(
-          "flex flex-col items-end gap-1",
-          isMobile && "flex-col-reverse items-start"
-        )}
-      >
-        <div className="flex items-center text-sm">
-          <TimeDisplay time={ferry.depart} format={timeFormat} />
-          <span className="opacity-60">→</span>
-          <TimeDisplay
-            time={ferry.arrive}
-            format={timeFormat}
-            className="text-right"
-          />
+      <div className="flex flex-col items-end gap-1">
+        <div className="flex items-center gap-1 text-sm flex-end">
+          <span className="text-muted-foreground text-sm">{displayLabel}</span>
+          <TimeDisplay time={displayTime} format={timeFormat} />
         </div>
         <div
           className={cn(
