@@ -113,11 +113,9 @@ function processScheduleData(): ScheduleCache {
     const stationIndex = stationIndexMap[station];
     if (stationIndex === undefined) return "~~";
 
-    if (direction === "northbound") {
-      const reversedIndex = times.length - 1 - stationIndex;
-      return times[reversedIndex] ?? "~~";
-    }
-
+    // Schedules list times using the canonical north-to-south station order
+    // regardless of travel direction, so we can index directly for both
+    // northbound and southbound trips.
     return times[stationIndex] ?? "~~";
   };
 
