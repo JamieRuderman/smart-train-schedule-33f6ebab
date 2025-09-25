@@ -2,7 +2,7 @@ name: Update Transit Feeds
 
 on:
   schedule:
-    - cron: "0 7 * * 1"
+    - cron: "0 13 * * *"
   workflow_dispatch:
 
 permissions:
